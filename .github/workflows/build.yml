@@ -8,16 +8,16 @@ on:
 
 jobs:
   build:
-    uses: ./.github/workflows/run-script.yml@master
+    uses: tim-hoffmann/notification-service/.github/workflows/run-script.yml@master
     with:
       script: build
 
-  lint:
-    uses: ./.github/workflows/run-script.yml@master
-    with:
-      script: lint
+  # lint:
+  #   uses: ./.github/workflows/run-script.yml@master
+  #   with:
+  #     script: lint
 
-  test:
-    uses: ./.github/workflows/run-script.yml@master
-    with:
-      script: test
+  # test:
+  #   uses: ./.github/workflows/run-script.yml@master
+  #   with:
+  #     script: test

@@ -1,15 +1,15 @@
 name: Run Script
 
 on:
-  run_script:
+  workflow_call:
     inputs:
       script:
         required: true
         type: string
 
 jobs:
-  build:
-    name: Build
+  run-script:
+    name: Run ${{ inputs.script }}
     runs-on: ubuntu-latest
 
     strategy:

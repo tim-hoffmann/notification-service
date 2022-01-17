@@ -3,7 +3,10 @@ name: notification-service
 on:
   push:
     branches:
-      - *
+      - develop
+      - master
+      - feature/*
+      - release/*
 
 jobs:
   build:

@@ -12,12 +12,12 @@ jobs:
     with:
       script: build
 
-  # lint:
-  #   uses: ./.github/workflows/run-script.yml@master
-  #   with:
-  #     script: lint
+  lint:
+    uses: tim-hoffmann/notification-service/.github/workflows/run-script.yml@master
+    with:
+      script: lint
 
-  # test:
-  #   uses: ./.github/workflows/run-script.yml@master
-  #   with:
-  #     script: test
+  test:
+    uses: tim-hoffmann/notification-service/.github/workflows/run-script.yml@master
+    with:
+      script: test

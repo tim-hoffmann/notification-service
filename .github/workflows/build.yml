@@ -8,41 +8,16 @@ on:
 
 jobs:
   build:
-    name: Build
-    runs-on: ubuntu-latest
+    uses: ./.github/workflows/run-script.yml@master
+    with:
+      script: build
 
-    strategy:
-      matrix:
-        node-version: [14.x]
+  lint:
+    uses: ./.github/workflows/run-script.yml@master
+    with:
+      script: lint
 
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Cache node_modules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
-      - name: Install dependencies
-        run: yarn --frozen-lockfile
-
-      - name: Run build
-        run: yarn build
-
-      - name: Run lint
-        run: yarn lint
-
-      - name: Run test
-        run: yarn test
+  test:
+    uses: ./.github/workflows/run-script.yml@master
+    with:
+      script: test

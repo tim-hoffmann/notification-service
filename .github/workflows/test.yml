@@ -1,4 +1,4 @@
-name: notification-service
+name: Test
 
 on:
   push:

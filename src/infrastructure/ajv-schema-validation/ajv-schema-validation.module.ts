@@ -6,7 +6,7 @@ import { AjvSchemaValidationService } from './services/ajv-schema-validation.ser
 @Module({
   providers: [
     { provide: SchemaValidationService, useClass: AjvSchemaValidationService },
-    { provide: Ajv, useValue: new Ajv() },
+    { provide: Ajv, useClass: Ajv },
   ],
 })
 export class AjvSchemaValidationModule {}

@@ -2,18 +2,18 @@ import { TransportType } from '../enums/transport-type.enum';
 import { Base } from './base.entity';
 
 export class BaseTemplate<TTransport> extends Base {
-  tenantId: string;
-  name: string;
-  from: string;
-  textTemplate: string;
-  locale: string;
+  tenantId!: string;
+  name!: string;
+  from!: string;
   dataSchema?: string;
-  transportType: TTransport;
+  transportType!: TTransport;
+  textTemplate!: string;
+  locale!: string;
 }
 
 export class EmailTemplate<TTransport> extends BaseTemplate<TTransport> {
-  htmlTemplate: string;
-  subjectTemplate: string;
+  htmlTemplate!: string;
+  subjectTemplate!: string;
   bcc?: string[];
 }
 

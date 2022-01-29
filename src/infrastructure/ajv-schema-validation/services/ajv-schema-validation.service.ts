@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import Ajv from 'ajv';
 import {
   SchemaValidationResult,
@@ -7,8 +7,7 @@ import {
 
 @Injectable()
 export class AjvSchemaValidationService implements SchemaValidationService {
-  @Inject(Ajv)
-  private readonly ajv: Ajv;
+  constructor(private readonly ajv: Ajv) {}
 
   async validateData(
     schema: string,

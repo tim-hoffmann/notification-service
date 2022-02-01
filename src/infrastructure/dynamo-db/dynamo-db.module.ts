@@ -8,9 +8,10 @@ import { TemplateMasterProfile } from './mapping/profiles/template-master.profil
 import { TemplateProfile } from './mapping/profiles/template.profile';
 import { TemplateRepository } from './repositories/template.repostory';
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
+import { CoreModule } from '../../core/core.module';
 
 @Module({
-  imports: [ConfigModule.forFeature(dynamoDbConfig), NanoidModule],
+  imports: [CoreModule, ConfigModule.forFeature(dynamoDbConfig), NanoidModule],
   providers: [
     {
       provide: DynamoDBClient,

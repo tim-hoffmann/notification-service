@@ -1,21 +1,18 @@
 import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
 import { ignore, mapFrom, Mapper, mapWithArguments } from '@automapper/core';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Template } from '../../../core/entities/template.entity';
 import { ReadTemplateDto } from '../../dtos/read-template.dto';
 import { CreateTemplateDto } from '../../dtos/create-template.dto';
-import { ConfigService } from '@nestjs/config';
+import { DEFAULT_LOCALE } from '../../../core/constants/di-tokens.constant';
 
 @Injectable()
 export class TemplateProfile extends AutomapperProfile {
-  private readonly defaultLocale: string;
-
-  constructor(@InjectMapper() mapper: Mapper, private readonly configService: ConfigService) {
+  constructor(
+    @InjectMapper() mapper: Mapper,
+    @Inject(DEFAULT_LOCALE) private readonly defaultLocale: string,
+  ) {
     super(mapper);
-
-    const defaultLocale = configService.get<string>('DEFAULT_LOCALE');
-    if (!defaultLocale) throw new Error(`Could not find env variable: ${'DEFAULT_LOCALE'}`);
-    this.defaultLocale = defaultLocale;
   }
 
   mapProfile() {

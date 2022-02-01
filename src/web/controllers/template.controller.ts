@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CreateTemplateDto } from '../../application/dtos/create-template.dto';
 import { TemplateService } from '../../application/services/template.service';
 
@@ -12,8 +12,12 @@ export class TemplateController {
   }
 
   @Get(':id')
-  async read(@Param('id') id: string) {
-    console.log('read', id);
+  async findOne(
+    @Param('tenantId') tenantId: string,
+    @Param('id') id: string,
+    @Query('locale') locale?: string,
+  ) {
+    return await this.templateService.findOne(tenantId, id, locale);
   }
 
   @Get()

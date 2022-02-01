@@ -1,5 +1,5 @@
 import { AutoMap } from '@automapper/classes';
-import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, ValidateIf } from 'class-validator';
 import { TransportType } from '../../core/enums/transport-type.enum';
 
 export class CreateTemplateDto {
@@ -29,10 +29,13 @@ export class CreateTemplateDto {
   locale?: string;
 
   @AutoMap()
-  htmlTemplate!: string;
+  @ValidateIf((o: CreateTemplateDto) => o.transportType === TransportType.Email)
+  htmlTemplate?: string;
 
   @AutoMap()
-  subjectTemplate!: string;
+  @ValidateIf((o: CreateTemplateDto) => o.transportType === TransportType.Email)
+  @IsNotEmpty()
+  subjectTemplate?: string;
 
   @AutoMap()
   bcc?: string[];

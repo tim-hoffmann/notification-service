@@ -1,11 +1,9 @@
-import { Model } from '@shiftcoders/dynamo-easy';
+import { AutoMap } from '@automapper/classes';
 import { TemplateMasterDataModel } from './templateMaster.data';
 
-@Model({ tableName: process.env.DYNAMO_DB_TABLE })
 export class TemplateDataModel extends TemplateMasterDataModel {
-  id!: string;
-  locale!: string;
-  textTemplate!: string;
-  subjectTemplate?: string;
-  htmlTemplate?: string;
+  @AutoMap() locale!: string;
+  @AutoMap() textTemplate!: string;
+  @AutoMap() subjectTemplate?: string;
+  @AutoMap() htmlTemplate?: string;
 }

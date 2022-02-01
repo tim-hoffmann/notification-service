@@ -1,24 +1,16 @@
+import { AutoMap } from '@automapper/classes';
 import { TransportType } from '../enums/transport-type.enum';
 import { Base } from './base.entity';
 
-export class BaseTemplate<TTransport> extends Base {
-  tenantId!: string;
-  name!: string;
-  from!: string;
-  dataSchema?: string;
-  transportType!: TTransport;
-  textTemplate!: string;
-  locale!: string;
+export class Template extends Base {
+  @AutoMap() tenantId!: string;
+  @AutoMap() name!: string;
+  @AutoMap() from!: string;
+  @AutoMap() dataSchema?: string;
+  @AutoMap() transportType!: TransportType;
+  @AutoMap() textTemplate!: string;
+  @AutoMap() locale!: string;
+  @AutoMap() htmlTemplate?: string;
+  @AutoMap() subjectTemplate?: string;
+  @AutoMap() bcc?: string[];
 }
-
-export class EmailTemplate<TTransport> extends BaseTemplate<TTransport> {
-  htmlTemplate!: string;
-  subjectTemplate!: string;
-  bcc?: string[];
-}
-
-export class SmsTemplate<TTransport> extends BaseTemplate<TTransport> {}
-
-export type Template<TTransport = TransportType> = TTransport extends TransportType.Email
-  ? EmailTemplate<TTransport>
-  : SmsTemplate<TTransport>;

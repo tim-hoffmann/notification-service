@@ -1,10 +1,14 @@
-import { Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { CreateTemplateDto } from '../../application/dtos/create-template.dto';
+import { TemplateService } from '../../application/services/template.service';
 
-@Controller(':tenantId/template')
+@Controller(':tenantId/templates')
 export class TemplateController {
+  constructor(private readonly templateService: TemplateService) {}
+
   @Post()
-  async create() {
-    console.log('create');
+  async create(@Param('tenantId') tenantId: string, @Body() dto: CreateTemplateDto) {
+    return await this.templateService.create(tenantId, dto);
   }
 
   @Get(':id')

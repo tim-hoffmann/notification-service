@@ -1,5 +1,7 @@
+import { AutoMap } from '@automapper/classes';
+
 export class Base {
-  id!: string;
-  updatedAt!: Date;
-  createdAt!: Date;
+  @AutoMap() id!: string;
+  @AutoMap() updatedAt!: Date;
+  @AutoMap() createdAt!: Date;
 }

@@ -1,0 +1,4 @@
+export enum ModelType {
+  TEMPLATE_MASTER = 'TEMPLATE_MASTER',
+  TEMPLATE = 'TEMPLATE',
+}

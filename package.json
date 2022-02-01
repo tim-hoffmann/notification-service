@@ -21,20 +21,28 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@automapper/classes": "^7.2.1",
+    "@automapper/core": "^7.2.1",
+    "@automapper/nestjs": "^7.2.1",
+    "@aws-sdk/client-dynamodb": "^3.49.0",
+    "@aws-sdk/lib-dynamodb": "^3.49.0",
+    "@aws-sdk/smithy-client": "^3.0.0",
     "@nestjs/common": "^8.0.0",
+    "@nestjs/config": "^1.1.6",
     "@nestjs/core": "^8.0.0",
+    "@nestjs/mapped-types": "^1.0.1",
     "@nestjs/platform-express": "^8.0.0",
-    "@shiftcoders/dynamo-easy": "^7.1.0",
     "ajv": "^8.8.2",
-    "aws-sdk": "^2.1063.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
+    "nanoid": "^3.2.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
-    "tslib": "^2.3.1"
+    "tslib": "^1.10.0"
   },
   "devDependencies": {
+    "@aws-sdk/types": "^3.0.0",
     "@nestjs/cli": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",

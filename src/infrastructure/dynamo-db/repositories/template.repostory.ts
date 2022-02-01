@@ -10,6 +10,7 @@ import { ModelType } from '../enums/model-type.enum';
 import { TemplateDataModel } from '../models/template.data';
 import { TemplateMasterDataModel } from '../models/templateMaster.data';
 import { DynamoDBDocument, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { getDateString } from '../../../core/utils/date.util';
 
 export class TemplateRepository implements ITemplateRepository {
   tableName = process.env.DYNAMO_DB_TABLE;
@@ -21,6 +22,8 @@ export class TemplateRepository implements ITemplateRepository {
   ) {}
 
   async create(entity: Template): Promise<Template> {
+    const now = getDateString();
+
     // 1. Try to get master template
     const { Item: templateMasterModel } = await this.client.get({
       TableName: this.tableName,
@@ -35,7 +38,7 @@ export class TemplateRepository implements ITemplateRepository {
     // 2. Create master template if doesn't exist
     if (!templateMasterModel) {
       const newTemplateMasterModel = this.mapper.map(entity, TemplateMasterDataModel, Template, {
-        extraArguments: { isCreated: true, id },
+        extraArguments: { now, id },
       });
 
       await this.client.put({ TableName: this.tableName, Item: newTemplateMasterModel });
@@ -43,7 +46,7 @@ export class TemplateRepository implements ITemplateRepository {
 
     // 3. Create template
     const templateModel = this.mapper.map(entity, TemplateDataModel, Template, {
-      extraArguments: { isCreated: true, id },
+      extraArguments: { now, id },
     });
 
     await this.client.put({ TableName: this.tableName, Item: templateModel });

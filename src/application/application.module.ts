@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { DynamoDbModule } from '../infrastructure/dynamo-db/dynamo-db.module';
 import { TemplateProfile } from './mapping/profiles/template.profile';
 import { TemplateService } from './services/template.service';
 
 @Module({
-  imports: [DynamoDbModule],
+  imports: [DynamoDbModule, ConfigModule],
   providers: [TemplateService, TemplateProfile],
   exports: [TemplateService],
 })

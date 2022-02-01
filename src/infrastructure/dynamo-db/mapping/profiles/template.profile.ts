@@ -13,8 +13,6 @@ export class TemplateProfile extends AutomapperProfile {
 
   mapProfile() {
     return (mapper: Mapper) => {
-      const now = new Date().toISOString();
-
       mapper
         .createMap(Template, TemplateDataModel)
         .forMember((dst) => dst.type, fromValue(ModelType.TEMPLATE))
@@ -27,16 +25,17 @@ export class TemplateProfile extends AutomapperProfile {
         .forMember(
           (dst) => dst.gsiSortKey,
           mapWithArguments<Template>(
-            (src, { id }) => `${ModelType.TEMPLATE}#${src.updatedAt}#${id ?? src.id}#${src.locale}`,
+            (src, { id, now }) =>
+              `${ModelType.TEMPLATE}#${now ?? src.updatedAt}#${id ?? src.id}#${src.locale}`,
           ),
         )
         .forMember(
           (dst) => dst.createdAt,
-          mapWithArguments<Template>((src, { isCreated }) => (isCreated ? now : src.createdAt)),
+          mapWithArguments<Template>((src, { now }) => now ?? src.createdAt),
         )
         .forMember(
           (dst) => dst.updatedAt,
-          mapWithArguments<Template>((src, { isCreated }) => (isCreated ? now : src.updatedAt)),
+          mapWithArguments<Template>((src, { now }) => now ?? src.updatedAt),
         )
         .forMember(
           (dst) => dst.id,

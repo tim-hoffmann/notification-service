@@ -15,7 +15,7 @@ export class TemplateService {
 
   async create(tenantId: string, dto: CreateTemplateDto): Promise<ReadTemplateDto> {
     const entity = this.mapper.map(dto, Template, CreateTemplateDto, {
-      extraArguments: { tenantId, locale: 'en-US' },
+      extraArguments: { tenantId },
     });
     const createdEntity = await this.templateRepository.create(entity);
     const readDto = this.mapper.map(createdEntity, ReadTemplateDto, Template);

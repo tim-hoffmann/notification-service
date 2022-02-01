@@ -25,6 +25,10 @@ export class CreateTemplateDto {
   textTemplate!: string;
 
   @AutoMap()
+  @IsOptional()
+  locale?: string;
+
+  @AutoMap()
   htmlTemplate!: string;
 
   @AutoMap()

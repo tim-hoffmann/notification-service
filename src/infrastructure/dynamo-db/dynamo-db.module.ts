@@ -6,7 +6,7 @@ import dynamoDbConfig, { defaultConfig } from './dynamo-db.config';
 import { DynamoDbConfig } from './interfaces/dynamo-db-config.interface';
 import { TemplateMasterProfile } from './mapping/profiles/template-master.profile';
 import { TemplateProfile } from './mapping/profiles/template.profile';
-import { TemplateRepository } from './repositories/template.repostory';
+import { TemplateRepository } from './repositories/template.repository';
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
 import { CoreModule } from '../../core/core.module';
 

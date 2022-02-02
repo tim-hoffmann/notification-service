@@ -36,7 +36,7 @@ export class TemplateController {
   }
 
   @Get(':id/locales')
-  async readLocales() {
-    console.log('delete');
+  async findLocales(@Param('tenantId') tenantId: string, @Param('id') id: string) {
+    return await this.templateService.findLocales(tenantId, id);
   }
 }

@@ -3,7 +3,7 @@ import { InjectMapper } from '@automapper/nestjs';
 import { Inject, Injectable } from '@nestjs/common';
 import { DEFAULT_LOCALE } from '../../core/constants/di-tokens.constant';
 import { Template } from '../../core/entities/template.entity';
-import { TemplateRepository } from '../../infrastructure/dynamo-db/repositories/template.repostory';
+import { TemplateRepository } from '../../infrastructure/dynamo-db/repositories/template.repository';
 import { CreateTemplateDto } from '../dtos/create-template.dto';
 import { ReadTemplateDto } from '../dtos/read-template.dto';
 
@@ -34,5 +34,9 @@ export class TemplateService {
     const dto = this.mapper.map(entity, ReadTemplateDto, Template);
 
     return dto;
+  }
+
+  async findLocales(tenantId: string, id: string): Promise<string[]> {
+    return await this.templateRepository.findLocales(tenantId, id);
   }
 }

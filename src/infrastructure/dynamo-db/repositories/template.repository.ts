@@ -14,6 +14,7 @@ import { getDateString } from '../../../core/utils/date.util';
 import { ConfigService } from '@nestjs/config';
 import { DynamoDbConfig } from '../interfaces/dynamo-db-config.interface';
 import { defaultConfig } from '../dynamo-db.config';
+import { READ_ALL_INDEX } from '../constants/indexes.constant';
 
 export class TemplateRepository implements ITemplateRepository {
   private readonly tableName: string;
@@ -22,7 +23,7 @@ export class TemplateRepository implements ITemplateRepository {
     @InjectMapper() private readonly mapper: Mapper,
     @Inject(UNIQUE_ID_SERVICE) private readonly uniqueIdService: UniqueIdService,
     @Inject(DEFAULT_LOCALE) private readonly defaultLocale: string,
-    private readonly client: DynamoDBDocument,
+    private readonly db: DynamoDBDocument,
     configService: ConfigService,
   ) {
     const config = configService.get<DynamoDbConfig>('dynamoDb', defaultConfig);
@@ -33,7 +34,7 @@ export class TemplateRepository implements ITemplateRepository {
     const now = getDateString();
 
     // 1. Try to get master template
-    const { Item: templateMasterModel } = await this.client.get({
+    const { Item: templateMasterModel } = await this.db.get({
       TableName: this.tableName,
       Key: {
         tenantId: entity.tenantId,
@@ -49,7 +50,7 @@ export class TemplateRepository implements ITemplateRepository {
         extraArguments: { now, id },
       });
 
-      await this.client.put({ TableName: this.tableName, Item: newTemplateMasterModel });
+      await this.db.put({ TableName: this.tableName, Item: newTemplateMasterModel });
     }
 
     // 3. Create template
@@ -57,7 +58,7 @@ export class TemplateRepository implements ITemplateRepository {
       extraArguments: { now, id },
     });
 
-    await this.client.put({ TableName: this.tableName, Item: templateModel });
+    await this.db.put({ TableName: this.tableName, Item: templateModel });
 
     // 4. Return created template
     const createdEntity = this.mapper.map(templateModel, Template, TemplateDataModel);
@@ -70,7 +71,7 @@ export class TemplateRepository implements ITemplateRepository {
   }
 
   async findOne(tenantId: string, id: string, locale: string): Promise<Template> {
-    const { Item: model } = await this.client.get({
+    const { Item: model } = await this.db.get({
       TableName: this.tableName,
       Key: { tenantId, itemKey: `${id}#${ModelType.TEMPLATE}#${locale}` },
     });
@@ -80,8 +81,23 @@ export class TemplateRepository implements ITemplateRepository {
     return entity;
   }
 
-  findLocales(tenantId: string, id: string): Promise<string[]> {
-    throw new Error('Method not implemented.');
+  async findLocales(tenantId: string, id: string): Promise<string[]> {
+    const { Items } = await this.db.query({
+      TableName: this.tableName,
+      ExpressionAttributeValues: {
+        ':tenantId': tenantId,
+        ':itemKey': `${id}#${ModelType.TEMPLATE}#`,
+      },
+      ExpressionAttributeNames: {
+        '#tenantId': 'tenantId',
+        '#itemKey': 'itemKey',
+      },
+      KeyConditionExpression: '#tenantId = :tenantId and begins_with(#itemKey, :itemKey)',
+    });
+
+    const locales = Items?.map<string>((i) => i.locale) ?? [];
+
+    return locales;
   }
 
   update(

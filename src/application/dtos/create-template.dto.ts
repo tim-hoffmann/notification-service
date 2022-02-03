@@ -1,5 +1,5 @@
 import { AutoMap } from '@automapper/classes';
-import { IsEnum, IsNotEmpty, IsOptional, ValidateIf } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, Matches, ValidateIf } from 'class-validator';
 import { TransportType } from '../../core/enums/transport-type.enum';
 
 export class CreateTemplateDto {
@@ -25,6 +25,7 @@ export class CreateTemplateDto {
   textTemplate!: string;
 
   @AutoMap()
+  @Matches(/^[A-Za-z]{2,4}([_-][A-Za-z]{4})?([_-]([A-Za-z]{2}|[0-9]{3}))?$/)
   @IsOptional()
   locale?: string;
 

@@ -1,9 +1,10 @@
 import { Mapper } from '@automapper/core';
 import { InjectMapper } from '@automapper/nestjs';
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DEFAULT_LOCALE } from '../../core/constants/di-tokens.constant';
 import { Template } from '../../core/entities/template.entity';
 import { TemplateRepository } from '../../infrastructure/dynamo-db/repositories/template.repository';
+import { CreateTemplateLocaleDto } from '../dtos/create-template-locale.dto';
 import { CreateTemplateDto } from '../dtos/create-template.dto';
 import { ReadTemplateDto } from '../dtos/read-template.dto';
 
@@ -18,6 +19,28 @@ export class TemplateService {
   async create(tenantId: string, dto: CreateTemplateDto): Promise<ReadTemplateDto> {
     const entity = this.mapper.map(dto, Template, CreateTemplateDto, {
       extraArguments: { tenantId },
+    });
+    const createdEntity = await this.templateRepository.create(entity);
+    const readDto = this.mapper.map(createdEntity, ReadTemplateDto, Template);
+
+    return readDto;
+  }
+
+  async createLocale(
+    tenantId: string,
+    id: string,
+    dto: CreateTemplateLocaleDto,
+  ): Promise<ReadTemplateDto> {
+    if (!(await this.templateRepository.exists(tenantId, id))) {
+      throw new NotFoundException(`Template not found`);
+    }
+
+    if (await this.templateRepository.exists(tenantId, id, dto.locale)) {
+      throw new BadRequestException(`Template with locale already exists: ${dto.locale}`);
+    }
+
+    const entity = this.mapper.map(dto, Template, CreateTemplateLocaleDto, {
+      extraArguments: { tenantId, id },
     });
     const createdEntity = await this.templateRepository.create(entity);
     const readDto = this.mapper.map(createdEntity, ReadTemplateDto, Template);

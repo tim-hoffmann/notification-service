@@ -15,6 +15,7 @@ import { ConfigService } from '@nestjs/config';
 import { DynamoDbConfig } from '../interfaces/dynamo-db-config.interface';
 import { defaultConfig } from '../dynamo-db.config';
 import { READ_ALL_INDEX } from '../constants/indexes.constant';
+import { stringify } from 'querystring';
 
 export class TemplateRepository implements ITemplateRepository {
   private readonly tableName: string;
@@ -34,13 +35,11 @@ export class TemplateRepository implements ITemplateRepository {
     const now = getDateString();
 
     // 1. Try to get master template
-    const { Item: templateMasterModel } = await this.db.get({
-      TableName: this.tableName,
-      Key: {
-        tenantId: entity.tenantId,
-        itemKey: `${entity.id}#${ModelType.TEMPLATE_MASTER}`,
-      },
-    });
+    let templateMasterModel: TemplateMasterDataModel | undefined;
+
+    if (entity.id) {
+      templateMasterModel = await this.findTemplateMaster(entity.tenantId, entity.id);
+    }
 
     const id = templateMasterModel?.id ?? (await this.uniqueIdService.generate());
 
@@ -58,7 +57,10 @@ export class TemplateRepository implements ITemplateRepository {
       extraArguments: { now, id },
     });
 
-    await this.db.put({ TableName: this.tableName, Item: templateModel });
+    await this.db.put({
+      TableName: this.tableName,
+      Item: { ...templateMasterModel, ...templateModel },
+    });
 
     // 4. Return created template
     const createdEntity = this.mapper.map(templateModel, Template, TemplateDataModel);
@@ -113,7 +115,23 @@ export class TemplateRepository implements ITemplateRepository {
     throw new Error('Method not implemented.');
   }
 
-  exists(tenantId: string, id: string, locale?: string): Promise<boolean> {
-    throw new Error('Method not implemented.');
+  async exists(tenantId: string, id: string, locale?: string): Promise<boolean> {
+    const template = locale
+      ? await this.findOne(tenantId, id, locale)
+      : await this.findTemplateMaster(tenantId, id);
+
+    return !!template;
+  }
+
+  private async findTemplateMaster(
+    tenantId: string,
+    id: string,
+  ): Promise<TemplateMasterDataModel | undefined> {
+    const { Item } = await this.db.get({
+      TableName: this.tableName,
+      Key: { tenantId, itemKey: `${id}#${ModelType.TEMPLATE_MASTER}` },
+    });
+
+    return Item as TemplateMasterDataModel | undefined;
   }
 }

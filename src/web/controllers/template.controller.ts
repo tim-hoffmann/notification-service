@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { CreateTemplateLocaleDto } from '../../application/dtos/create-template-locale.dto';
 import { CreateTemplateDto } from '../../application/dtos/create-template.dto';
 import { TemplateService } from '../../application/services/template.service';
 
@@ -9,6 +10,15 @@ export class TemplateController {
   @Post()
   async create(@Param('tenantId') tenantId: string, @Body() dto: CreateTemplateDto) {
     return await this.templateService.create(tenantId, dto);
+  }
+
+  @Post(':id/locales')
+  async createLocale(
+    @Param('tenantId') tenantId: string,
+    @Param('id') id: string,
+    @Body() dto: CreateTemplateLocaleDto,
+  ) {
+    return await this.templateService.createLocale(tenantId, id, dto);
   }
 
   @Get(':id')

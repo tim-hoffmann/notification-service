@@ -23,7 +23,7 @@ export class TemplateMasterProfile extends AutomapperProfile {
           ),
         )
         .forMember(
-          (dst) => dst.type,
+          (dst) => dst.gsiSortKey,
           mapWithArguments<Template>(
             (src, { id, now }) =>
               `${ModelType.TEMPLATE_MASTER}#${now ?? src.updatedAt}#${id ?? src.id}`,

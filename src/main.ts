@@ -8,7 +8,7 @@ async function bootstrap() {
 
   app.enableVersioning();
   app.setGlobalPrefix('v1');
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   await app.listen(3000, () => logger.log('App listening on port 3000'));
 }

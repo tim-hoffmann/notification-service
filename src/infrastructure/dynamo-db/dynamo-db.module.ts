@@ -4,11 +4,12 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { NanoidModule } from '../nanoid/nanoid.module';
 import dynamoDbConfig, { defaultConfig } from './dynamo-db.config';
 import { DynamoDbConfig } from './interfaces/dynamo-db-config.interface';
-import { TemplateMasterProfile } from './mapping/profiles/template-master.profile';
-import { TemplateProfile } from './mapping/profiles/template.profile';
-import { TemplateRepository } from './repositories/template.repository';
+import { TemplateMasterProfile } from './mapping/profiles/template.profile';
+import { TemplateProfile } from './mapping/profiles/template-locale.profile';
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
 import { CoreModule } from '../../core/core.module';
+import { TemplateDynamoDbRepository } from './repositories/template-dynamo-db.repository';
+import { TEMPLATE_REPOSITORY } from '../../core/constants/di-tokens.constant';
 
 @Module({
   imports: [CoreModule, ConfigModule.forFeature(dynamoDbConfig), NanoidModule],
@@ -29,11 +30,11 @@ import { CoreModule } from '../../core/core.module';
         }),
       inject: [DynamoDBClient],
     },
-    TemplateRepository,
+    { provide: TEMPLATE_REPOSITORY, useClass: TemplateDynamoDbRepository },
     TemplateProfile,
     TemplateMasterProfile,
   ],
-  exports: [TemplateRepository],
+  exports: [TEMPLATE_REPOSITORY],
 })
 export class DynamoDbModule {
   constructor(

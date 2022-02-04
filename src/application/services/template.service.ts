@@ -1,9 +1,9 @@
 import { Mapper } from '@automapper/core';
 import { InjectMapper } from '@automapper/nestjs';
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { DEFAULT_LOCALE } from '../../core/constants/di-tokens.constant';
+import { DEFAULT_LOCALE, TEMPLATE_REPOSITORY } from '../../core/constants/di-tokens.constant';
 import { Template } from '../../core/entities/template.entity';
-import { TemplateRepository } from '../../infrastructure/dynamo-db/repositories/template.repository';
+import { TemplateRepository } from '../../core/repositories/template.repository';
 import { CreateTemplateLocaleDto } from '../dtos/create-template-locale.dto';
 import { CreateTemplateDto } from '../dtos/create-template.dto';
 import { ReadTemplateDto } from '../dtos/read-template.dto';
@@ -11,7 +11,7 @@ import { ReadTemplateDto } from '../dtos/read-template.dto';
 @Injectable()
 export class TemplateService {
   constructor(
-    private readonly templateRepository: TemplateRepository,
+    @Inject(TEMPLATE_REPOSITORY) private readonly templateRepository: TemplateRepository,
     @Inject(DEFAULT_LOCALE) private readonly defaultLocale: string,
     @InjectMapper() private readonly mapper: Mapper,
   ) {}

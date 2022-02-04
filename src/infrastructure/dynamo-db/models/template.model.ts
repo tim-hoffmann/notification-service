@@ -1,9 +1,8 @@
 import { AutoMap } from '@automapper/classes';
 import { TransportType } from '../../../core/enums/transport-type.enum';
-import { BaseDataModel } from './base.data';
+import { BaseModel } from './base.model';
 
-export class TemplateMasterDataModel extends BaseDataModel {
-  @AutoMap() id!: string;
+export class TemplateModel extends BaseModel {
   @AutoMap() name!: string;
   @AutoMap() from!: string;
   @AutoMap() transportType!: TransportType;

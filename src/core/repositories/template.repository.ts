@@ -1,7 +1,9 @@
-import { Template } from '../entities/template.entity';
+import { Template, TemplateLocale } from '../entities/template.entity';
 
-export interface ITemplateRepository {
+export interface TemplateRepository {
   create(entity: Template): Promise<Template>;
+
+  createLocale(tenantId: string, id: string, entity: TemplateLocale): Promise<Template>;
 
   find(tenantId: string, limit: number, cursor?: any): Promise<Template[]>;
 

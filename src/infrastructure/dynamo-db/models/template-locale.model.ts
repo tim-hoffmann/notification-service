@@ -1,8 +1,7 @@
 import { AutoMap } from '@automapper/classes';
-import { TemplateMasterDataModel } from './templateMaster.data';
+import { BaseModel } from './base.model';
 
-export class TemplateDataModel extends TemplateMasterDataModel {
-  @AutoMap() locale!: string;
+export class TemplateLocaleModel extends BaseModel {
   @AutoMap() textTemplate!: string;
   @AutoMap() subjectTemplate?: string;
   @AutoMap() htmlTemplate?: string;

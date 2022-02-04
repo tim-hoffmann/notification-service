@@ -3,21 +3,20 @@ import { Mapper } from '@automapper/core';
 import { InjectMapper } from '@automapper/nestjs';
 import { Inject } from '@nestjs/common';
 import { DEFAULT_LOCALE, UNIQUE_ID_SERVICE } from '../../../core/constants/di-tokens.constant';
-import { Template } from '../../../core/entities/template.entity';
-import { ITemplateRepository } from '../../../core/repositories/template.repository';
+import { Template, TemplateLocale } from '../../../core/entities/template.entity';
+import { TemplateRepository } from '../../../core/repositories/template.repository';
 import { UniqueIdService } from '../../../core/services/unique-id.service';
 import { ModelType } from '../enums/model-type.enum';
-import { TemplateDataModel } from '../models/template.data';
-import { TemplateMasterDataModel } from '../models/templateMaster.data';
-import { DynamoDBDocument, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { TemplateLocaleModel } from '../models/template-locale.model';
+import { TemplateModel } from '../models/template.model';
+import { DynamoDBDocument, GetCommand, PutCommand, PutCommandInput } from '@aws-sdk/lib-dynamodb';
 import { getDateString } from '../../../core/utils/date.util';
 import { ConfigService } from '@nestjs/config';
 import { DynamoDbConfig } from '../interfaces/dynamo-db-config.interface';
 import { defaultConfig } from '../dynamo-db.config';
-import { READ_ALL_INDEX } from '../constants/indexes.constant';
-import { stringify } from 'querystring';
+import { batchPut } from '../utils/batch-put.util';
 
-export class TemplateRepository implements ITemplateRepository {
+export class TemplateDynamoDbRepository implements TemplateRepository {
   private readonly tableName: string;
 
   constructor(
@@ -33,39 +32,37 @@ export class TemplateRepository implements ITemplateRepository {
 
   async create(entity: Template): Promise<Template> {
     const now = getDateString();
+    const id = await this.uniqueIdService.generate();
+    const putInputs: PutCommandInput[] = [];
 
-    // 1. Try to get master template
-    let templateMasterModel: TemplateMasterDataModel | undefined;
-
-    if (entity.id) {
-      templateMasterModel = await this.findTemplateMaster(entity.tenantId, entity.id);
-    }
-
-    const id = templateMasterModel?.id ?? (await this.uniqueIdService.generate());
-
-    // 2. Create master template if doesn't exist
-    if (!templateMasterModel) {
-      const newTemplateMasterModel = this.mapper.map(entity, TemplateMasterDataModel, Template, {
-        extraArguments: { now, id },
-      });
-
-      await this.db.put({ TableName: this.tableName, Item: newTemplateMasterModel });
-    }
-
-    // 3. Create template
-    const templateModel = this.mapper.map(entity, TemplateDataModel, Template, {
+    const model = this.mapper.map(entity, TemplateModel, Template, {
       extraArguments: { now, id },
     });
 
-    await this.db.put({
-      TableName: this.tableName,
-      Item: { ...templateMasterModel, ...templateModel },
+    putInputs.push({ TableName: this.tableName, Item: model });
+
+    if (entity.locales && entity.locales.length > 0) {
+      entity.locales.forEach(async (l) => {
+        const m = this.mapper.map(l, TemplateLocaleModel, TemplateLocale, {
+          extraArguments: { now, templateId: model.id, tenantId: model.tenantId },
+        });
+        putInputs.push({ TableName: this.tableName, Item: m });
+      });
+    }
+
+    await this.db.batchWrite({
+      RequestItems: { [this.tableName]: putInputs.map((p) => ({ PutRequest: p })) },
     });
 
-    // 4. Return created template
-    const createdEntity = this.mapper.map(templateModel, Template, TemplateDataModel);
+    const createdEntity = this.mapper.map(model, Template, TemplateModel, {
+      extraArguments: { locales: entity.locales },
+    });
 
     return createdEntity;
+  }
+
+  createLocale(tenantId: string, id: string, entity: TemplateLocale): Promise<Template> {
+    throw new Error('Method not implemented.');
   }
 
   find(tenantId: string, limit: number, cursor?: any): Promise<Template[]> {
@@ -78,7 +75,7 @@ export class TemplateRepository implements ITemplateRepository {
       Key: { tenantId, itemKey: `${id}#${ModelType.TEMPLATE}#${locale}` },
     });
 
-    const entity = this.mapper.map(model, Template, TemplateDataModel);
+    const entity = this.mapper.map(model, Template, TemplateLocaleModel);
 
     return entity;
   }
@@ -126,12 +123,12 @@ export class TemplateRepository implements ITemplateRepository {
   private async findTemplateMaster(
     tenantId: string,
     id: string,
-  ): Promise<TemplateMasterDataModel | undefined> {
+  ): Promise<TemplateModel | undefined> {
     const { Item } = await this.db.get({
       TableName: this.tableName,
-      Key: { tenantId, itemKey: `${id}#${ModelType.TEMPLATE_MASTER}` },
+      Key: { tenantId, itemKey: `${id}#${ModelType.TEMPLATE_LOCALE}` },
     });
 
-    return Item as TemplateMasterDataModel | undefined;
+    return Item as TemplateModel | undefined;
   }
 }

@@ -1,7 +1,5 @@
 import { AutoMap } from '@automapper/classes';
-import { IsNotEmpty, Matches, ValidateIf } from 'class-validator';
-import { TransportType } from '../../core/enums/transport-type.enum';
-import { CreateTemplateDto } from './create-template.dto';
+import { IsByteLength, IsNotEmpty, IsOptional, Matches } from 'class-validator';
 
 export class CreateTemplateLocaleDto {
   @AutoMap()
@@ -14,11 +12,11 @@ export class CreateTemplateLocaleDto {
   textTemplate!: string;
 
   @AutoMap()
-  @ValidateIf((o: CreateTemplateDto) => o.transportType === TransportType.Email)
+  @IsOptional()
+  @IsByteLength(0, 256000)
   htmlTemplate?: string;
 
   @AutoMap()
-  @ValidateIf((o: CreateTemplateDto) => o.transportType === TransportType.Email)
-  @IsNotEmpty()
+  @IsOptional()
   subjectTemplate?: string;
 }

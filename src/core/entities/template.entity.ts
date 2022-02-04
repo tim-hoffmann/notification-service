@@ -8,9 +8,12 @@ export class Template extends Base {
   @AutoMap() from!: string;
   @AutoMap() dataSchema?: string;
   @AutoMap() transportType!: TransportType;
+  @AutoMap({ typeFn: () => TemplateLocale }) locales?: TemplateLocale[];
+  @AutoMap() bcc?: string[];
+}
+
+export class TemplateLocale extends Base {
   @AutoMap() textTemplate!: string;
-  @AutoMap() locale!: string;
   @AutoMap() htmlTemplate?: string;
   @AutoMap() subjectTemplate?: string;
-  @AutoMap() bcc?: string[];
 }

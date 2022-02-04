@@ -57,30 +57,19 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
   }
 
   async findOne(tenantId: string, id: string, locale: string): Promise<Template> {
-    const { Items: models } = await this.db.query({
+    const { Item: model } = await this.db.get({
       TableName: this.tableName,
-      ExpressionAttributeValues: {
-        ':tenantId': tenantId,
-        ':itemKey': `${id}`,
+      Key: {
+        tenantId,
+        itemKey: `${id}#${ModelType.TEMPLATE_LOCALE}#${locale}`,
       },
-      ExpressionAttributeNames: {
-        '#tenantId': 'tenantId',
-        '#itemKey': 'itemKey',
-      },
-      KeyConditionExpression: '#tenantId = :tenantId and begins_with(#itemKey, :itemKey)',
     });
 
-    if (!models) {
+    if (!model) {
       throw new EntityNotFoundException();
     }
 
-    const localeModels = models.filter((m) => m.type === ModelType.TEMPLATE_LOCALE);
-    const templateModel = models.find((m) => m.type === ModelType.TEMPLATE);
-
-    const locales = this.mapper.mapArray(localeModels, TemplateLocale, TemplateLocaleModel);
-    const entity = this.mapper.map(templateModel, Template, TemplateModel, {
-      extraArguments: { locales },
-    });
+    const entity = this.mapper.map(model, Template, TemplateLocaleModel);
 
     return entity;
   }
@@ -90,7 +79,7 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
       TableName: this.tableName,
       ExpressionAttributeValues: {
         ':tenantId': tenantId,
-        ':itemKey': `${id}#${ModelType.TEMPLATE}#`,
+        ':itemKey': `${id}#${ModelType.TEMPLATE_LOCALE}#`,
       },
       ExpressionAttributeNames: {
         '#tenantId': 'tenantId',
@@ -118,22 +107,6 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
   }
 
   async exists(tenantId: string, id: string, locale?: string): Promise<boolean> {
-    const template = locale
-      ? await this.findOne(tenantId, id, locale)
-      : await this.findTemplateMaster(tenantId, id);
-
-    return !!template;
-  }
-
-  private async findTemplateMaster(
-    tenantId: string,
-    id: string,
-  ): Promise<TemplateModel | undefined> {
-    const { Item } = await this.db.get({
-      TableName: this.tableName,
-      Key: { tenantId, itemKey: `${id}#${ModelType.TEMPLATE_LOCALE}` },
-    });
-
-    return Item as TemplateModel | undefined;
+    throw new Error('Method not implemented.');
   }
 }

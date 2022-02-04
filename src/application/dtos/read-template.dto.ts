@@ -1,6 +1,5 @@
 import { AutoMap } from '@automapper/classes';
 import { TransportType } from '../../core/enums/transport-type.enum';
-import { ReadTemplateLocaleDto } from './read-template-locale.dto';
 
 export class ReadTemplateDto {
   @AutoMap() id!: string;
@@ -9,5 +8,8 @@ export class ReadTemplateDto {
   @AutoMap() dataSchema?: string;
   @AutoMap() transportType!: TransportType;
   @AutoMap() bcc?: string[];
-  @AutoMap({ typeFn: () => ReadTemplateLocaleDto }) locales!: ReadTemplateLocaleDto[];
+  @AutoMap() locale!: string;
+  @AutoMap() textTemplate!: string;
+  @AutoMap() htmlTemplate?: string;
+  @AutoMap() subjectTemplate?: string;
 }

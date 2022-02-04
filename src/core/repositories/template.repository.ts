@@ -1,4 +1,5 @@
-import { Template, TemplateLocale } from '../entities/template.entity';
+import { TemplateLocale } from '../entities/template-locale.entity';
+import { Template } from '../entities/template.entity';
 
 export interface TemplateRepository {
   create(entity: Template): Promise<Template>;

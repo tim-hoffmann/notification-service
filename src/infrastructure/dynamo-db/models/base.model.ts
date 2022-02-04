@@ -5,6 +5,7 @@ export class BaseModel {
   @AutoMap() id!: string;
   @AutoMap() tenantId!: string;
   itemKey!: string;
+  gsiSortKey!: string;
   createdAt!: string;
   updatedAt!: string;
   type!: ModelType;

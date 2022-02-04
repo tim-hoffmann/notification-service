@@ -18,9 +18,11 @@ export class TemplateMasterProfile extends AutomapperProfile {
         .forMember((dst) => dst.type, fromValue(ModelType.TEMPLATE))
         .forMember(
           (dst) => dst.itemKey,
-          mapWithArguments(
-            (src, { id, now }) => `${id ?? src.id}#${ModelType.TEMPLATE}#${now ?? src.updatedAt}`,
-          ),
+          mapWithArguments((src, { id }) => `${id ?? src.id}#${ModelType.TEMPLATE}#`),
+        )
+        .forMember(
+          (dst) => dst.gsiSortKey,
+          mapWithArguments((src, { now }) => `${ModelType.TEMPLATE}#${now ?? src.updatedAt}`),
         )
         .forMember(
           (dst) => dst.createdAt,
@@ -37,10 +39,6 @@ export class TemplateMasterProfile extends AutomapperProfile {
 
       mapper
         .createMap(TemplateModel, Template)
-        .forMember(
-          (dst) => dst.locales,
-          mapWithArguments((_, { locales }) => locales),
-        )
         .forMember(
           (dst) => dst.createdAt,
           mapFrom((src) => new Date(src.createdAt)),

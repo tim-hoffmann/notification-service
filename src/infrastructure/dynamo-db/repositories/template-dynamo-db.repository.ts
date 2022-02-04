@@ -3,7 +3,7 @@ import { Mapper } from '@automapper/core';
 import { InjectMapper } from '@automapper/nestjs';
 import { Inject } from '@nestjs/common';
 import { DEFAULT_LOCALE, UNIQUE_ID_SERVICE } from '../../../core/constants/di-tokens.constant';
-import { Template, TemplateLocale } from '../../../core/entities/template.entity';
+import { Template } from '../../../core/entities/template.entity';
 import { TemplateRepository } from '../../../core/repositories/template.repository';
 import { UniqueIdService } from '../../../core/services/unique-id.service';
 import { ModelType } from '../enums/model-type.enum';
@@ -15,6 +15,9 @@ import { ConfigService } from '@nestjs/config';
 import { DynamoDbConfig } from '../interfaces/dynamo-db-config.interface';
 import { defaultConfig } from '../dynamo-db.config';
 import { batchPut } from '../utils/batch-put.util';
+import { EntityNotFoundException } from '../../../core/exceptions/entity-not-found.exception';
+import { TemplateLocale } from '../../../core/entities/template-locale.entity';
+import { BaseModel } from '../models/base.model';
 
 export class TemplateDynamoDbRepository implements TemplateRepository {
   private readonly tableName: string;
@@ -33,30 +36,14 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
   async create(entity: Template): Promise<Template> {
     const now = getDateString();
     const id = await this.uniqueIdService.generate();
-    const putInputs: PutCommandInput[] = [];
+    const opts = { extraArguments: { now, id } };
 
-    const model = this.mapper.map(entity, TemplateModel, Template, {
-      extraArguments: { now, id },
-    });
+    const templateModel = this.mapper.map(entity, TemplateModel, Template, opts);
+    const templateLocaleModel = this.mapper.map(entity, TemplateLocaleModel, Template, opts);
 
-    putInputs.push({ TableName: this.tableName, Item: model });
+    await batchPut(this.db, this.tableName, [templateModel, templateLocaleModel]);
 
-    if (entity.locales && entity.locales.length > 0) {
-      entity.locales.forEach(async (l) => {
-        const m = this.mapper.map(l, TemplateLocaleModel, TemplateLocale, {
-          extraArguments: { now, templateId: model.id, tenantId: model.tenantId },
-        });
-        putInputs.push({ TableName: this.tableName, Item: m });
-      });
-    }
-
-    await this.db.batchWrite({
-      RequestItems: { [this.tableName]: putInputs.map((p) => ({ PutRequest: p })) },
-    });
-
-    const createdEntity = this.mapper.map(model, Template, TemplateModel, {
-      extraArguments: { locales: entity.locales },
-    });
+    const createdEntity = this.mapper.map(templateLocaleModel, Template, TemplateLocaleModel);
 
     return createdEntity;
   }
@@ -70,12 +57,30 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
   }
 
   async findOne(tenantId: string, id: string, locale: string): Promise<Template> {
-    const { Item: model } = await this.db.get({
+    const { Items: models } = await this.db.query({
       TableName: this.tableName,
-      Key: { tenantId, itemKey: `${id}#${ModelType.TEMPLATE}#${locale}` },
+      ExpressionAttributeValues: {
+        ':tenantId': tenantId,
+        ':itemKey': `${id}`,
+      },
+      ExpressionAttributeNames: {
+        '#tenantId': 'tenantId',
+        '#itemKey': 'itemKey',
+      },
+      KeyConditionExpression: '#tenantId = :tenantId and begins_with(#itemKey, :itemKey)',
     });
 
-    const entity = this.mapper.map(model, Template, TemplateLocaleModel);
+    if (!models) {
+      throw new EntityNotFoundException();
+    }
+
+    const localeModels = models.filter((m) => m.type === ModelType.TEMPLATE_LOCALE);
+    const templateModel = models.find((m) => m.type === ModelType.TEMPLATE);
+
+    const locales = this.mapper.mapArray(localeModels, TemplateLocale, TemplateLocaleModel);
+    const entity = this.mapper.map(templateModel, Template, TemplateModel, {
+      extraArguments: { locales },
+    });
 
     return entity;
   }

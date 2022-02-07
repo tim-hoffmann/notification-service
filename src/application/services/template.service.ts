@@ -3,6 +3,7 @@ import { InjectMapper } from '@automapper/nestjs';
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DEFAULT_LOCALE, TEMPLATE_REPOSITORY } from '../../core/constants/di-tokens.constant';
 import { Template } from '../../core/entities/template.entity';
+import { PaginationResult } from '../../core/interfaces/pagination-result.interface';
 import { TemplateRepository } from '../../core/repositories/template.repository';
 import { CreateTemplateLocaleDto } from '../dtos/create-template-locale.dto';
 import { CreateTemplateDto } from '../dtos/create-template.dto';
@@ -61,5 +62,16 @@ export class TemplateService {
 
   async findLocales(tenantId: string, id: string): Promise<string[]> {
     return await this.templateRepository.findLocales(tenantId, id);
+  }
+
+  async find(
+    tenantId: string,
+    limit = 10,
+    cursor: string,
+  ): Promise<PaginationResult<ReadTemplateDto>> {
+    const result = await this.templateRepository.find(tenantId, limit, cursor);
+    const dtos = this.mapper.mapArray(result.items, ReadTemplateDto, Template);
+
+    return { ...result, items: dtos };
   }
 }

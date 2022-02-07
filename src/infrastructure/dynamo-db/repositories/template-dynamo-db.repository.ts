@@ -18,6 +18,9 @@ import { batchPut } from '../utils/batch-put.util';
 import { EntityNotFoundException } from '../../../core/exceptions/entity-not-found.exception';
 import { TemplateLocale } from '../../../core/entities/template-locale.entity';
 import { BaseModel } from '../models/base.model';
+import { READ_ALL_INDEX } from '../constants/indexes.constant';
+import { PaginationResult } from '../../../core/interfaces/pagination-result.interface';
+import { createCursor, createNextCursor, createPrevCursor } from '../utils/cursor.util';
 
 export class TemplateDynamoDbRepository implements TemplateRepository {
   private readonly tableName: string;
@@ -52,8 +55,46 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
     throw new Error('Method not implemented.');
   }
 
-  find(tenantId: string, limit: number, cursor?: any): Promise<Template[]> {
-    throw new Error('Method not implemented.');
+  async find(
+    tenantId: string,
+    limit: number,
+    beforeCursor?: any,
+    afterCursor?: any,
+  ): Promise<PaginationResult<Template>> {
+    const cursor = beforeCursor ?? afterCursor;
+
+    const { Items: models, LastEvaluatedKey } = await this.db.query({
+      TableName: this.tableName,
+      IndexName: READ_ALL_INDEX,
+      Limit: limit + 1,
+      ExclusiveStartKey: cursor,
+      ScanIndexForward: beforeCursor ? false : true,
+      ExpressionAttributeValues: {
+        ':tenantId': tenantId,
+        ':gsiSortKey': `${ModelType.TEMPLATE}#`,
+      },
+      ExpressionAttributeNames: {
+        '#tenantId': 'tenantId',
+        '#gsiSortKey': 'gsiSortKey',
+      },
+      KeyConditionExpression: '#tenantId = :tenantId and begins_with(#gsiSortKey, :gsiSortKey)',
+    });
+
+    if (!models) {
+      return { items: [] };
+    }
+
+    const entities = this.mapper.mapArray(models, Template, TemplateModel);
+    const prevCursor = createPrevCursor(models, afterCursor, beforeCursor, LastEvaluatedKey);
+    const nextCursor = createNextCursor(models, beforeCursor, limit, LastEvaluatedKey);
+
+    return {
+      items: entities,
+      prevCursor,
+      nextCursor,
+      hasPrevious: !!prevCursor,
+      hasNext: !!nextCursor,
+    };
   }
 
   async findOne(tenantId: string, id: string, locale: string): Promise<Template> {

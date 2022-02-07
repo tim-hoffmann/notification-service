@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { CreateTemplateLocaleDto } from '../../application/dtos/create-template-locale.dto';
 import { CreateTemplateDto } from '../../application/dtos/create-template.dto';
 import { TemplateService } from '../../application/services/template.service';
@@ -31,8 +41,12 @@ export class TemplateController {
   }
 
   @Get()
-  async readAll() {
-    console.log('readAll');
+  async find(
+    @Param('tenantId') tenantId: string,
+    @Query('limit', ParseIntPipe) limit: number,
+    @Query('cursor') cursor: string,
+  ) {
+    return await this.templateService.find(tenantId, limit, cursor);
   }
 
   @Put(':id')

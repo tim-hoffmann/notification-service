@@ -44,9 +44,10 @@ export class TemplateController {
   async find(
     @Param('tenantId') tenantId: string,
     @Query('limit', ParseIntPipe) limit: number,
-    @Query('cursor') cursor: string,
+    @Query('beforeCursor') beforeCursor?: string,
+    @Query('afterCursor') afterCursor?: string,
   ) {
-    return await this.templateService.find(tenantId, limit, cursor);
+    return await this.templateService.find(tenantId, limit, beforeCursor, afterCursor);
   }
 
   @Put(':id')

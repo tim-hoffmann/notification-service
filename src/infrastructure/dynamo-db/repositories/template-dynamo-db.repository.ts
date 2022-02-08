@@ -20,7 +20,12 @@ import { TemplateLocale } from '../../../core/entities/template-locale.entity';
 import { BaseModel } from '../models/base.model';
 import { READ_ALL_INDEX } from '../constants/indexes.constant';
 import { PaginationResult } from '../../../core/interfaces/pagination-result.interface';
-import { createCursor, createNextCursor, createPrevCursor } from '../utils/cursor.util';
+import {
+  createCursor,
+  createNextCursor,
+  createPrevCursor,
+  parseCursor,
+} from '../utils/cursor.util';
 
 export class TemplateDynamoDbRepository implements TemplateRepository {
   private readonly tableName: string;
@@ -61,7 +66,7 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
     beforeCursor?: any,
     afterCursor?: any,
   ): Promise<PaginationResult<Template>> {
-    const cursor = beforeCursor ?? afterCursor;
+    const cursor = parseCursor(beforeCursor ?? afterCursor);
 
     const { Items: models, LastEvaluatedKey } = await this.db.query({
       TableName: this.tableName,
@@ -84,7 +89,7 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
       return { items: [] };
     }
 
-    const entities = this.mapper.mapArray(models, Template, TemplateModel);
+    const entities = this.mapper.mapArray(models.slice(0, limit), Template, TemplateModel);
     const prevCursor = createPrevCursor(models, afterCursor, beforeCursor, LastEvaluatedKey);
     const nextCursor = createNextCursor(models, beforeCursor, limit, LastEvaluatedKey);
 

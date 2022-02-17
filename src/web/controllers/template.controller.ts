@@ -1,16 +1,7 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseIntPipe,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CreateTemplateLocaleDto } from '../../application/dtos/create-template-locale.dto';
 import { CreateTemplateDto } from '../../application/dtos/create-template.dto';
+import { PaginationQueryDto } from '../../application/dtos/pagination-query.dto';
 import { TemplateService } from '../../application/services/template.service';
 
 @Controller(':tenantId/templates')
@@ -43,11 +34,9 @@ export class TemplateController {
   @Get()
   async find(
     @Param('tenantId') tenantId: string,
-    @Query('limit', ParseIntPipe) limit: number,
-    @Query('beforeCursor') beforeCursor?: string,
-    @Query('afterCursor') afterCursor?: string,
+    @Query() { first, before, after }: PaginationQueryDto,
   ) {
-    return await this.templateService.find(tenantId, limit, beforeCursor, afterCursor);
+    return await this.templateService.find(tenantId, first, before, after);
   }
 
   @Put(':id')

@@ -66,11 +66,11 @@ export class TemplateService {
 
   async find(
     tenantId: string,
-    limit = 10,
-    prevCursor?: string,
-    nextCursor?: string,
+    first = 10,
+    before?: string,
+    after?: string,
   ): Promise<PaginationResult<ReadTemplateDto>> {
-    const result = await this.templateRepository.find(tenantId, limit, prevCursor, nextCursor);
+    const result = await this.templateRepository.find(tenantId, first, before, after);
     const dtos = this.mapper.mapArray(result.items, ReadTemplateDto, Template);
 
     return { ...result, items: dtos };

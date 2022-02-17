@@ -62,18 +62,18 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
 
   async find(
     tenantId: string,
-    limit: number,
-    beforeCursor?: any,
-    afterCursor?: any,
+    first: number,
+    before?: any,
+    after?: any,
   ): Promise<PaginationResult<Template>> {
-    const cursor = parseCursor(beforeCursor ?? afterCursor);
+    const cursor = parseCursor(before ?? after);
 
     const { Items: models, LastEvaluatedKey } = await this.db.query({
       TableName: this.tableName,
       IndexName: READ_ALL_INDEX,
-      Limit: limit + 1,
+      Limit: first + 1,
       ExclusiveStartKey: cursor,
-      ScanIndexForward: beforeCursor ? false : true,
+      ScanIndexForward: !!before,
       ExpressionAttributeValues: {
         ':tenantId': tenantId,
         ':gsiSortKey': `${ModelType.TEMPLATE}#`,
@@ -89,16 +89,16 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
       return { items: [] };
     }
 
-    const entities = this.mapper.mapArray(models.slice(0, limit), Template, TemplateModel);
-    const prevCursor = createPrevCursor(models, afterCursor, beforeCursor, LastEvaluatedKey);
-    const nextCursor = createNextCursor(models, beforeCursor, limit, LastEvaluatedKey);
+    const entities = this.mapper.mapArray(models.slice(0, first), Template, TemplateModel);
+    const startCursor = createPrevCursor(models, after, before, LastEvaluatedKey);
+    const endCursor = createNextCursor(models, before, first, LastEvaluatedKey);
 
     return {
       items: entities,
-      prevCursor,
-      nextCursor,
-      hasPrevious: !!prevCursor,
-      hasNext: !!nextCursor,
+      startCursor,
+      endCursor,
+      hasPreviousPage: !!startCursor,
+      hasNextPage: !!endCursor,
     };
   }
 

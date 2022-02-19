@@ -26,6 +26,7 @@ import {
   createPrevCursor,
   parseCursor,
 } from '../utils/cursor.util';
+import { batchDelete } from '../utils/batch-delete.util';
 
 export class TemplateDynamoDbRepository implements TemplateRepository {
   private readonly tableName: string;
@@ -165,8 +166,24 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
     throw new Error('Method not implemented.');
   }
 
-  delete(tenantId: string, id: string, locale?: string): Promise<void> {
-    throw new Error('Method not implemented.');
+  async delete(tenantId: string, id: string, locale?: string): Promise<void> {
+    // Only delete template locale if locale is set
+    if (locale) {
+      await this.db.delete({
+        TableName: this.tableName,
+        Key: { tenantId, itemKey: `${id}#${ModelType.TEMPLATE_LOCALE}#${locale}` },
+      });
+      return;
+    }
+
+    // Delete all template locales and template if locale is not set
+    const templateKey = { tenantId, itemKey: `${id}#${ModelType.TEMPLATE}#` };
+    const locales = await this.findLocales(tenantId, id);
+    const templateLocaleKeys = locales.map((l) => ({
+      tenantId,
+      itemKey: `${id}#${ModelType.TEMPLATE_LOCALE}#${l}`,
+    }));
+    await batchDelete(this.db, this.tableName, [templateKey, ...templateLocaleKeys]);
   }
 
   async exists(tenantId: string, id: string, locale?: string): Promise<boolean> {

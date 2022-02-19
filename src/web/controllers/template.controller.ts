@@ -45,8 +45,17 @@ export class TemplateController {
   }
 
   @Delete(':id')
-  async delete() {
-    console.log('delete');
+  async delete(@Param('tenantId') tenantId: string, @Param('id') id: string) {
+    return await this.templateService.delete(tenantId, id);
+  }
+
+  @Delete(':id/:locale')
+  async deleteLocale(
+    @Param('tenantId') tenantId: string,
+    @Param('id') id: string,
+    @Param('locale') locale: string,
+  ) {
+    return await this.templateService.delete(tenantId, id, locale);
   }
 
   @Get(':id/locales')

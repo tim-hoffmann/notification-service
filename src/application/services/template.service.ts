@@ -63,7 +63,13 @@ export class TemplateService {
   }
 
   async findLocales(tenantId: string, id: string): Promise<string[]> {
-    return await this.templateRepository.findLocales(tenantId, id);
+    const locales = await this.templateRepository.findLocales(tenantId, id);
+
+    if (locales.length <= 0) {
+      throw new NotFoundException();
+    }
+
+    return locales;
   }
 
   async find(
@@ -76,5 +82,9 @@ export class TemplateService {
     const dtos = this.mapper.mapArray(result.items, ReadTemplateDto, Template);
 
     return { ...result, items: dtos };
+  }
+
+  async delete(tenantId: string, id: string, locale?: string) {
+    await this.templateRepository.delete(tenantId, id, locale);
   }
 }

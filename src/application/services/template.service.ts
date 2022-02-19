@@ -2,11 +2,13 @@ import { Mapper } from '@automapper/core';
 import { InjectMapper } from '@automapper/nestjs';
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DEFAULT_LOCALE, TEMPLATE_REPOSITORY } from '../../core/constants/di-tokens.constant';
+import { TemplateLocale } from '../../core/entities/template-locale.entity';
 import { Template } from '../../core/entities/template.entity';
 import { PaginationResult } from '../../core/interfaces/pagination-result.interface';
 import { TemplateRepository } from '../../core/repositories/template.repository';
 import { CreateTemplateLocaleDto } from '../dtos/create-template-locale.dto';
 import { CreateTemplateDto } from '../dtos/create-template.dto';
+import { ReadTemplateLocaleDto } from '../dtos/read-template-locale.dto';
 import { ReadTemplateDto } from '../dtos/read-template.dto';
 
 @Injectable()
@@ -31,7 +33,7 @@ export class TemplateService {
     tenantId: string,
     id: string,
     dto: CreateTemplateLocaleDto,
-  ): Promise<ReadTemplateDto> {
+  ): Promise<ReadTemplateLocaleDto> {
     if (!(await this.templateRepository.exists(tenantId, id))) {
       throw new NotFoundException(`Template not found`);
     }
@@ -40,11 +42,11 @@ export class TemplateService {
       throw new BadRequestException(`Template with locale already exists: ${dto.locale}`);
     }
 
-    const entity = this.mapper.map(dto, Template, CreateTemplateLocaleDto, {
+    const entity = this.mapper.map(dto, TemplateLocale, CreateTemplateLocaleDto, {
       extraArguments: { tenantId, id },
     });
-    const createdEntity = await this.templateRepository.create(entity);
-    const readDto = this.mapper.map(createdEntity, ReadTemplateDto, Template);
+    const createdEntity = await this.templateRepository.createLocale(tenantId, id, entity);
+    const readDto = this.mapper.map(createdEntity, ReadTemplateLocaleDto, TemplateLocale);
 
     return readDto;
   }

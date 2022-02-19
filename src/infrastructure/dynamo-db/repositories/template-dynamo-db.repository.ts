@@ -33,7 +33,6 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
   constructor(
     @InjectMapper() private readonly mapper: Mapper,
     @Inject(UNIQUE_ID_SERVICE) private readonly uniqueIdService: UniqueIdService,
-    @Inject(DEFAULT_LOCALE) private readonly defaultLocale: string,
     private readonly db: DynamoDBDocument,
     configService: ConfigService,
   ) {
@@ -42,9 +41,8 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
   }
 
   async create(entity: Template): Promise<Template> {
-    const now = getDateString();
     const id = await this.uniqueIdService.generate();
-    const opts = { extraArguments: { now, id } };
+    const opts = { extraArguments: { now: getDateString(), id } };
 
     const templateModel = this.mapper.map(entity, TemplateModel, Template, opts);
     const templateLocaleModel = this.mapper.map(entity, TemplateLocaleModel, Template, opts);
@@ -56,8 +54,27 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
     return createdEntity;
   }
 
-  createLocale(tenantId: string, id: string, entity: TemplateLocale): Promise<Template> {
-    throw new Error('Method not implemented.');
+  async createLocale(
+    tenantId: string,
+    id: string,
+    entity: TemplateLocale,
+  ): Promise<TemplateLocale> {
+    const now = getDateString();
+    const { Item: templateModel } = await this.db.get({
+      TableName: this.tableName,
+      Key: {
+        tenantId,
+        itemKey: `${id}#TEMPLATE#`,
+      },
+    });
+
+    const templateLocaleModel = this.mapper.map(entity, TemplateLocaleModel, TemplateLocale, {
+      extraArguments: { ...templateModel, now, id },
+    });
+
+    await this.db.put({ TableName: this.tableName, Item: templateLocaleModel });
+
+    return entity;
   }
 
   async find(
@@ -153,6 +170,26 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
   }
 
   async exists(tenantId: string, id: string, locale?: string): Promise<boolean> {
-    throw new Error('Method not implemented.');
+    if (locale) {
+      const { Item: templateLocaleModel } = await this.db.get({
+        TableName: this.tableName,
+        Key: {
+          tenantId,
+          itemKey: `${id}#${ModelType.TEMPLATE_LOCALE}#${locale}`,
+        },
+      });
+
+      return !!templateLocaleModel;
+    }
+
+    const { Item: templateModel } = await this.db.get({
+      TableName: this.tableName,
+      Key: {
+        tenantId,
+        itemKey: `${id}#TEMPLATE#`,
+      },
+    });
+
+    return !!templateModel;
   }
 }

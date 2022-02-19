@@ -5,7 +5,7 @@ import { PaginationResult } from '../interfaces/pagination-result.interface';
 export interface TemplateRepository {
   create(entity: Template): Promise<Template>;
 
-  createLocale(tenantId: string, id: string, entity: TemplateLocale): Promise<Template>;
+  createLocale(tenantId: string, id: string, entity: TemplateLocale): Promise<TemplateLocale>;
 
   find(
     tenantId: string,

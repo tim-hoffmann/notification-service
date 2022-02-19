@@ -70,6 +70,53 @@ export class TemplateProfile extends AutomapperProfile {
           (dst) => dst.updatedAt,
           mapFrom((src) => new Date(src.updatedAt)),
         );
+
+      mapper
+        .createMap(TemplateLocale, TemplateLocaleModel)
+        .forMember(
+          (dst) => dst.id,
+          mapWithArguments((src, { id }) => id ?? src.id),
+        )
+        .forMember(
+          (dst) => dst.tenantId,
+          mapWithArguments((src, { tenantId }) => tenantId ?? src.tenantId),
+        )
+        .forMember((dst) => dst.type, fromValue(ModelType.TEMPLATE_LOCALE))
+        .forMember(
+          (dst) => dst.itemKey,
+          mapWithArguments(
+            (src, { id }) => `${id ?? src.id}#${ModelType.TEMPLATE_LOCALE}#${src.locale}`,
+          ),
+        )
+        .forMember((dst) => dst.gsiSortKey, fromValue(undefined))
+        .forMember(
+          (dst) => dst.createdAt,
+          mapWithArguments((src, { now }) => now ?? src.createdAt),
+        )
+        .forMember(
+          (dst) => dst.updatedAt,
+          mapWithArguments((src, { now }) => now ?? src.updatedAt),
+        )
+        .forMember(
+          (dst) => dst.name,
+          mapWithArguments((_, { name }) => name),
+        )
+        .forMember(
+          (dst) => dst.from,
+          mapWithArguments((_, { from }) => from),
+        )
+        .forMember(
+          (dst) => dst.transportType,
+          mapWithArguments((_, { transportType }) => transportType),
+        )
+        .forMember(
+          (dst) => dst.dataSchema,
+          mapWithArguments((_, { dataSchema }) => dataSchema),
+        )
+        .forMember(
+          (dst) => dst.bcc,
+          mapWithArguments((_, { bcc }) => bcc),
+        );
     };
   }
 }

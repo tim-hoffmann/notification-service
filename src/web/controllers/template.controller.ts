@@ -13,22 +13,9 @@ export class TemplateController {
     return await this.templateService.create(tenantId, dto);
   }
 
-  @Post(':id/locales')
-  async createLocale(
-    @Param('tenantId') tenantId: string,
-    @Param('id') id: string,
-    @Body() dto: CreateTemplateLocaleDto,
-  ) {
-    return await this.templateService.createLocale(tenantId, id, dto);
-  }
-
   @Get(':id')
-  async findOne(
-    @Param('tenantId') tenantId: string,
-    @Param('id') id: string,
-    @Query('locale') locale?: string,
-  ) {
-    return await this.templateService.findOne(tenantId, id, locale);
+  async findOne(@Param('tenantId') tenantId: string, @Param('id') id: string) {
+    return await this.templateService.findOne(tenantId, id);
   }
 
   @Get()
@@ -49,6 +36,29 @@ export class TemplateController {
     return await this.templateService.delete(tenantId, id);
   }
 
+  @Post(':id/locales')
+  async createLocale(
+    @Param('tenantId') tenantId: string,
+    @Param('id') id: string,
+    @Body() dto: CreateTemplateLocaleDto,
+  ) {
+    return await this.templateService.createLocale(tenantId, id, dto);
+  }
+
+  @Get(':id/locales/:locale')
+  async findOneLocale(
+    @Param('tenantId') tenantId: string,
+    @Param('id') id: string,
+    @Param('locale') locale: string,
+  ) {
+    return await this.templateService.findOne(tenantId, id, locale);
+  }
+
+  @Get(':id/locales')
+  async findLocales(@Param('tenantId') tenantId: string, @Param('id') id: string) {
+    return await this.templateService.findLocales(tenantId, id);
+  }
+
   @Delete(':id/:locale')
   async deleteLocale(
     @Param('tenantId') tenantId: string,
@@ -56,10 +66,5 @@ export class TemplateController {
     @Param('locale') locale: string,
   ) {
     return await this.templateService.delete(tenantId, id, locale);
-  }
-
-  @Get(':id/locales')
-  async findLocales(@Param('tenantId') tenantId: string, @Param('id') id: string) {
-    return await this.templateService.findLocales(tenantId, id);
   }
 }

@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/tim-hoffmann/notification-service/compare/v1.4.0...v1.4.1) (2022-01-17)
+
+
+### Bug Fixes
+
+* add @semantic-release/npm ([675ba4f](https://github.com/tim-hoffmann/notification-service/commit/675ba4f144fdc432a5a46133c84afdbe97ac219a))
+
 # [1.4.0](https://github.com/tim-hoffmann/notification-service/compare/v1.3.0...v1.4.0) (2022-01-17)
 
 

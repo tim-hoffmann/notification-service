@@ -70,10 +70,10 @@
   resolved "https://registry.yarnpkg.com/@automapper/core/-/core-7.2.1.tgz#2a1b67e25f9ca79b433e39700e5681ccfff49cdf"
   integrity sha512-G3RSPjQ/V8nWyxTDjnp68GkGmttbJHaAMJ4t6y7MQuoVTNnt7RCjvuo204ypPvbtyQ8nVVfgcQC0OQtX/YOGdw==
 
-"@automapper/nestjs@^7.2.1":
-  version "7.2.1"
-  resolved "https://registry.yarnpkg.com/@automapper/nestjs/-/nestjs-7.2.1.tgz#f4e4acc8f9a5bc53ca1d199cd246ce61c67ffec9"
-  integrity sha512-fLJgJvXLPK35Yj+eikcfpvdZHjGzlsz1Fk0c3x/xIrbe3JH/LVHnC7zDRbU1hVqBdYlnKw21mvhkX15EtHgpJw==
+"@automapper/nestjs@^8.3.6":
+  version "8.3.6"
+  resolved "https://registry.yarnpkg.com/@automapper/nestjs/-/nestjs-8.3.6.tgz#260fec8f205fc8f66b8d86d2b1d58397dbc1bd93"
+  integrity sha512-9wL4RZTpiT1pN2b8P4vMBikejZu43tG1kIGLkkTbbxMFJlwH/iGWbI1QPD3x20O3N11RuFegGMErpBTrUtKs7Q==
 
 "@aws-crypto/ie11-detection@^2.0.0":
   version "2.0.0"

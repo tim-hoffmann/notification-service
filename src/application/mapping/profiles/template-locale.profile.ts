@@ -1,5 +1,5 @@
 import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
-import { mapFrom, Mapper } from '@automapper/core';
+import { Mapper, mapWithArguments } from '@automapper/core';
 import { Inject, Injectable } from '@nestjs/common';
 import { CreateTemplateLocaleDto } from '../../dtos/create-template-locale.dto';
 import { ReadTemplateLocaleDto } from '../../dtos/read-template-locale.dto';
@@ -20,7 +20,7 @@ export class TemplateLocaleProfile extends AutomapperProfile {
 
       mapper.createMap(CreateTemplateDto, TemplateLocale).forMember(
         (dst) => dst.locale,
-        mapFrom((src) => src.locale ?? this.defaultLocale),
+        mapWithArguments((_, { locale }) => locale ?? this.defaultLocale),
       );
     };
   }

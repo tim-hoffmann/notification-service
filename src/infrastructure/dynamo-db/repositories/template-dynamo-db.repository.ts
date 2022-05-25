@@ -1,32 +1,25 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Mapper } from '@automapper/core';
 import { InjectMapper } from '@automapper/nestjs';
-import { Inject } from '@nestjs/common';
-import { DEFAULT_LOCALE, UNIQUE_ID_SERVICE } from '../../../core/constants/di-tokens.constant';
+import { Inject, NotImplementedException } from '@nestjs/common';
+import { UNIQUE_ID_SERVICE } from '../../../core/constants/di-tokens.constant';
 import { Template } from '../../../core/entities/template.entity';
 import { TemplateRepository } from '../../../core/repositories/template.repository';
 import { UniqueIdService } from '../../../core/services/unique-id.service';
 import { ModelType } from '../enums/model-type.enum';
 import { TemplateLocaleModel } from '../models/template-locale.model';
 import { TemplateModel } from '../models/template.model';
-import { DynamoDBDocument, GetCommand, PutCommand, PutCommandInput } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
 import { getDateString } from '../../../core/utils/date.util';
-import { ConfigService } from '@nestjs/config';
-import { DynamoDbConfig } from '../interfaces/dynamo-db-config.interface';
-import { defaultConfig } from '../dynamo-db.config';
+import { ConfigService, ConfigType } from '@nestjs/config';
 import { batchPut } from '../utils/batch-put.util';
 import { EntityNotFoundException } from '../../../core/exceptions/entity-not-found.exception';
 import { TemplateLocale } from '../../../core/entities/template-locale.entity';
-import { BaseModel } from '../models/base.model';
 import { READ_ALL_INDEX } from '../constants/indexes.constant';
 import { PaginationResult } from '../../../core/interfaces/pagination-result.interface';
-import {
-  createCursor,
-  createNextCursor,
-  createPrevCursor,
-  parseCursor,
-} from '../utils/cursor.util';
+import { createNextCursor, createPrevCursor, parseCursor } from '../utils/cursor.util';
 import { batchDelete } from '../utils/batch-delete.util';
+import dynamoDbConfig from '../dynamo-db.config';
 
 export class TemplateDynamoDbRepository implements TemplateRepository {
   private readonly tableName: string;
@@ -35,9 +28,8 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
     @InjectMapper() private readonly mapper: Mapper,
     @Inject(UNIQUE_ID_SERVICE) private readonly uniqueIdService: UniqueIdService,
     private readonly db: DynamoDBDocument,
-    configService: ConfigService,
+    @Inject(dynamoDbConfig.KEY) config: ConfigType<typeof dynamoDbConfig>,
   ) {
-    const config = configService.get<DynamoDbConfig>('dynamoDb', defaultConfig);
     this.tableName = config.tableName;
   }
 
@@ -157,13 +149,8 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
     return locales;
   }
 
-  update(
-    tenantId: string,
-    id: string,
-    locale: string,
-    update: Partial<Template>,
-  ): Promise<Template> {
-    throw new Error('Method not implemented.');
+  update(tenantId: string, id: string, locale: string, update: Template): Promise<Template> {
+    throw new NotImplementedException();
   }
 
   async delete(tenantId: string, id: string, locale?: string): Promise<void> {

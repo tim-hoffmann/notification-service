@@ -5,6 +5,7 @@ import { Template } from '../../../core/entities/template.entity';
 import { ReadTemplateDto } from '../../dtos/read-template.dto';
 import { CreateTemplateDto } from '../../dtos/create-template.dto';
 import { TemplateLocale } from '../../../core/entities/template-locale.entity';
+import { PatchTemplateDto } from '../../dtos/patch-template.dto';
 
 @Injectable()
 export class TemplateProfile extends AutomapperProfile {
@@ -25,7 +26,23 @@ export class TemplateProfile extends AutomapperProfile {
         .forMember((dst) => dst.updatedAt, ignore())
         .forMember(
           (dst) => dst.localeFields,
-          mapFrom((src) => this.mapper.map(src, TemplateLocale, CreateTemplateDto)),
+          mapWithArguments((src, { locale }) =>
+            this.mapper.map(src, TemplateLocale, CreateTemplateDto, { extraArguments: { locale } }),
+          ),
+        );
+
+      mapper
+        .createMap(PatchTemplateDto, Template)
+        .forMember(
+          (dst) => dst.tenantId,
+          mapWithArguments((_, { tenantId }) => tenantId),
+        )
+        .forMember((dst) => dst.id, ignore())
+        .forMember((dst) => dst.createdAt, ignore())
+        .forMember((dst) => dst.updatedAt, ignore())
+        .forMember(
+          (dst) => dst.localeFields,
+          mapFrom((src) => this.mapper.map(src, TemplateLocale, PatchTemplateDto)),
         );
 
       mapper

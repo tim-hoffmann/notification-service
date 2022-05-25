@@ -8,6 +8,7 @@ import { PaginationResult } from '../../core/interfaces/pagination-result.interf
 import { TemplateRepository } from '../../core/repositories/template.repository';
 import { CreateTemplateLocaleDto } from '../dtos/create-template-locale.dto';
 import { CreateTemplateDto } from '../dtos/create-template.dto';
+import { PatchTemplateDto } from '../dtos/patch-template.dto';
 import { ReadTemplateLocaleDto } from '../dtos/read-template-locale.dto';
 import { ReadTemplateDto } from '../dtos/read-template.dto';
 
@@ -21,7 +22,7 @@ export class TemplateService {
 
   async create(tenantId: string, dto: CreateTemplateDto): Promise<ReadTemplateDto> {
     const entity = this.mapper.map(dto, Template, CreateTemplateDto, {
-      extraArguments: { tenantId },
+      extraArguments: { tenantId, locale: this.defaultLocale },
     });
     const createdEntity = await this.templateRepository.create(entity);
     const readDto = this.mapper.map(createdEntity, ReadTemplateDto, Template);
@@ -74,7 +75,7 @@ export class TemplateService {
 
   async find(
     tenantId: string,
-    first = 10,
+    first = 100,
     before?: string,
     after?: string,
   ): Promise<PaginationResult<ReadTemplateDto>> {
@@ -82,6 +83,18 @@ export class TemplateService {
     const dtos = this.mapper.mapArray(result.items, ReadTemplateDto, Template);
 
     return { ...result, items: dtos };
+  }
+
+  async patch(tenantId: string, id: string, dto: PatchTemplateDto): Promise<ReadTemplateDto> {
+    const locale = this.defaultLocale;
+    const currentEntity = await this.templateRepository.findOne(tenantId, id, locale);
+    this.mapper.map(dto, Template, PatchTemplateDto, currentEntity, {
+      extraArguments: { tenantId },
+    });
+    const patchedEntity = await this.templateRepository.update(tenantId, id, locale, currentEntity);
+    const readDto = this.mapper.map(patchedEntity, ReadTemplateDto, Template);
+
+    return readDto;
   }
 
   async delete(tenantId: string, id: string, locale?: string) {

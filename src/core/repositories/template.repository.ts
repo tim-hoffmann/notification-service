@@ -18,12 +18,7 @@ export interface TemplateRepository {
 
   findLocales(tenantId: string, id: string): Promise<string[]>;
 
-  update(
-    tenantId: string,
-    id: string,
-    locale: string,
-    update: Partial<Template>,
-  ): Promise<Template>;
+  update(tenantId: string, id: string, locale: string, update: Template): Promise<Template>;
 
   delete(tenantId: string, id: string, locale?: string): Promise<void>;
 

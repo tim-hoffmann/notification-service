@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigType } from '@nestjs/config';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { NanoidModule } from '../nanoid/nanoid.module';
-import dynamoDbConfig, { defaultConfig } from './dynamo-db.config';
-import { DynamoDbConfig } from './interfaces/dynamo-db-config.interface';
+import dynamoDbConfig from './dynamo-db.config';
 import { TemplateMasterProfile } from './mapping/profiles/template.profile';
 import { TemplateProfile } from './mapping/profiles/template-locale.profile';
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
@@ -16,11 +15,10 @@ import { TEMPLATE_REPOSITORY } from '../../core/constants/di-tokens.constant';
   providers: [
     {
       provide: DynamoDBClient,
-      useFactory: (configService: ConfigService) => {
-        const config = configService.get<DynamoDbConfig>('dynamoDb', defaultConfig);
+      useFactory: (config: ConfigType<typeof dynamoDbConfig>) => {
         return new DynamoDBClient({ ...config });
       },
-      inject: [ConfigService],
+      inject: [dynamoDbConfig.KEY],
     },
     {
       provide: DynamoDBDocument,

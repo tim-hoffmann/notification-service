@@ -21,7 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@automapper/classes": "^7.2.1",
+    "@automapper/classes": "^8.3.6",
     "@automapper/core": "^7.2.1",
     "@automapper/nestjs": "^7.2.1",
     "@aws-sdk/client-dynamodb": "^3.49.0",

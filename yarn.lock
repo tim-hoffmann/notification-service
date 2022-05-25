@@ -60,10 +60,10 @@
     ora "5.4.1"
     rxjs "6.6.7"
 
-"@automapper/classes@^7.2.1":
-  version "7.2.1"
-  resolved "https://registry.yarnpkg.com/@automapper/classes/-/classes-7.2.1.tgz#2833f704879da74a04cb4b1e0d24cb3e84d4c41f"
-  integrity sha512-brK3xqKTyPlUNYm/gcbiSP/uN2c74CTAfjySpyYXYhEHG+FQRq1K7GIO8n2g4L30Mj9vpcl2oVfAy4N/NK+7og==
+"@automapper/classes@^8.3.6":
+  version "8.3.6"
+  resolved "https://registry.yarnpkg.com/@automapper/classes/-/classes-8.3.6.tgz#e50bba62d509efe0a23660008a152ca5d45ef21d"
+  integrity sha512-PN6Yic0riPrnSagI+v0eR2OJ647N2fVsfvQWrjoIVzXRXmoUANTUjMiWIBy0/mTkJlklmQf6wEQt/oCfHp2GCA==
 
 "@automapper/core@^7.2.1":
   version "7.2.1"

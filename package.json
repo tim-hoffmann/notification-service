@@ -25,7 +25,7 @@
     "@automapper/core": "^7.2.1",
     "@automapper/nestjs": "^7.2.1",
     "@aws-sdk/client-dynamodb": "^3.49.0",
-    "@aws-sdk/lib-dynamodb": "^3.49.0",
+    "@aws-sdk/lib-dynamodb": "^3.95.0",
     "@aws-sdk/smithy-client": "^3.0.0",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^1.1.6",

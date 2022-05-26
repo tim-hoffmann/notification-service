@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query } from '@nestjs/common';
 import { CreateTemplateLocaleDto } from '../../application/dtos/create-template-locale.dto';
 import { CreateTemplateDto } from '../../application/dtos/create-template.dto';
 import { PaginationQueryDto } from '../../application/dtos/pagination-query.dto';
@@ -40,6 +40,7 @@ export class TemplateController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   async delete(
     @Param('tenantId') tenantId: string,
     @Param('id') id: string,

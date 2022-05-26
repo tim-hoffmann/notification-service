@@ -5,6 +5,8 @@ import { WebModule } from '../src/web/web.module';
 
 describe('TemplateController (e2e)', () => {
   let app: INestApplication;
+  const tenant = 'test-tenant';
+  const id = 'B2K4nfcZNi0mPMCH';
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -18,7 +20,7 @@ describe('TemplateController (e2e)', () => {
 
   describe('/:tenantId/templates (POST)', () => {
     it('should create a new template', async () => {
-      const response = await request(app.getHttpServer()).post('/tenant/templates').send({
+      const response = await request(app.getHttpServer()).post(`/${tenant}/templates`).send({
         name: 'test2',
         from: 'test@test.de',
         transportType: 'Email',
@@ -40,9 +42,34 @@ describe('TemplateController (e2e)', () => {
 
   describe('/:tenantId/templates/:id (GET)', () => {
     it('should return the requested template', async () => {
-      const response = await request(app.getHttpServer()).get('/tenant/templates/B2K4nfcZNi0mPMCH');
+      const response = await request(app.getHttpServer()).get(`/${tenant}/templates/${id}`);
 
       expect(response.statusCode).toBe(200);
+    });
+  });
+
+  describe('/:tenantId/templates (GET)', () => {
+    it('should return the requested template', async () => {
+      const response = await request(app.getHttpServer()).get(`/${tenant}/templates`);
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.items.length).toBe(1);
+    });
+  });
+
+  describe('/:tenantId/templates (PATCH)', () => {
+    it('should patch the template', async () => {
+      const response = await request(app.getHttpServer()).patch(`/${tenant}/templates/${id}`);
+
+      expect(response.statusCode).toBe(200);
+    });
+  });
+
+  describe('/:tenantId/templates (DELETE)', () => {
+    it('should delete the template', async () => {
+      const response = await request(app.getHttpServer()).delete(`/${tenant}/templates/${id}`);
+
+      expect(response.statusCode).toBe(204);
     });
   });
 

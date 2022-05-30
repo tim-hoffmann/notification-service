@@ -23,3 +23,8 @@ jobs:
     uses: tim-hoffmann/notification-service/.github/workflows/run-script.yml@master
     with:
       script: test
+
+  test-e2e:
+    uses: tim-hoffmann/notification-service/.github/workflows/run-script.yml@master
+    with:
+      script: test:e2e

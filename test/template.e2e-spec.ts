@@ -32,7 +32,7 @@ describe('TemplateController (e2e)', () => {
       expect(response.body.id).toBeDefined();
     });
 
-    it('should return validation error on invalid request', () => {
+    it('should return validation errors on invalid request', () => {
       return request(app.getHttpServer())
         .post('/tenant/templates')
         .send({ name: 'test2' })
@@ -43,25 +43,61 @@ describe('TemplateController (e2e)', () => {
   describe('/:tenantId/templates/:id (GET)', () => {
     it('should return the requested template', async () => {
       const response = await request(app.getHttpServer()).get(`/${tenant}/templates/${id}`);
+      expect(response.statusCode).toBe(200);
+    });
+
+    it('should return 404 for invalid id', async () => {
+      const response = await request(app.getHttpServer()).get(`/${tenant}/templates/xxx`);
+      expect(response.statusCode).toBe(404);
+    });
+
+    it('should return localized template', async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/${tenant}/templates/${id}`)
+        .query({ locale: 'de-CH' });
 
       expect(response.statusCode).toBe(200);
+      expect(response.body.locale).toBe('de-CH');
+    });
+
+    it('should return 404 for invalid locale', async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/${tenant}/templates/${id}`)
+        .query({ locale: 'xx-XX' });
+
+      expect(response.statusCode).toBe(404);
     });
   });
 
   describe('/:tenantId/templates (GET)', () => {
-    it('should return the requested template', async () => {
+    it('should return all templates', async () => {
       const response = await request(app.getHttpServer()).get(`/${tenant}/templates`);
 
       expect(response.statusCode).toBe(200);
+      expect(response.body.items.length).toBe(2);
+    });
+
+    it('should limit returned templates', async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/${tenant}/templates`)
+        .query({ first: 1 });
+
+      expect(response.statusCode).toBe(200);
       expect(response.body.items.length).toBe(1);
+      expect(response.body.endCursor).toBeDefined();
+      expect(response.body.hasNextPage).toBeTruthy();
     });
   });
 
   describe('/:tenantId/templates (PATCH)', () => {
     it('should patch the template', async () => {
-      const response = await request(app.getHttpServer()).patch(`/${tenant}/templates/${id}`);
+      const response = await request(app.getHttpServer())
+        .patch(`/${tenant}/templates/${id}`)
+        .send({ textTemplate: 'Das ist ein Patch Test!' });
 
       expect(response.statusCode).toBe(200);
+      // expect(response.body.id).toBe(id);
+      // expect(response.body.textTemplate).toBe('Das ist ein Patch Test!');
     });
   });
 
@@ -70,6 +106,37 @@ describe('TemplateController (e2e)', () => {
       const response = await request(app.getHttpServer()).delete(`/${tenant}/templates/${id}`);
 
       expect(response.statusCode).toBe(204);
+    });
+  });
+
+  describe('/:tenantId/templates/:id/locales (POST)', () => {
+    it('should create a new template locale', async () => {
+      const response = await request(app.getHttpServer())
+        .post(`/${tenant}/templates/${id}/locales`)
+        .send({
+          textTemplate: 'Das ist ein Test!',
+          subjectTemplate: 'Hallo',
+          locale: 'de-DE',
+        });
+
+      expect(response.statusCode).toBe(201);
+      expect(response.body.locale).toBe('de-DE');
+    });
+
+    it('should return validation error on invalid request', () => {
+      return request(app.getHttpServer())
+        .post('/tenant/templates')
+        .send({ name: 'test2' })
+        .expect(400);
+    });
+  });
+
+  describe('/:tenantId/templates/:id/locales (GET)', () => {
+    it('should return all locale labels of the template', async () => {
+      const response = await request(app.getHttpServer()).get(`/${tenant}/templates/${id}/locales`);
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toStrictEqual(['de-CH', 'en-US']);
     });
   });
 

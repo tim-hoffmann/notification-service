@@ -10,6 +10,8 @@ import { PingController } from './controllers/ping.controller';
 import { TemplateController } from './controllers/template.controller';
 import { RequestLoggerMiddleware } from './middlewares/request-logger.middleware';
 import webConfig from './web.config';
+import { APP_FILTER } from '@nestjs/core';
+import { EntityNotFoundExceptionFilter } from './exception-filters/entity-not-found.filter';
 
 @Module({
   imports: [
@@ -24,6 +26,12 @@ import webConfig from './web.config';
     ApplicationModule,
   ],
   controllers: [PingController, TemplateController],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: EntityNotFoundExceptionFilter,
+    },
+  ],
 })
 export class WebModule {
   configure(consumer: MiddlewareConsumer) {

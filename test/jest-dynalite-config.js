@@ -1,7 +1,7 @@
 module.exports = {
   tables: [
     {
-      TableName: `notification-service--dev`,
+      TableName: `notification-service`,
       KeySchema: [
         { AttributeName: 'tenantId', KeyType: 'HASH' },
         { AttributeName: 'itemKey', KeyType: 'RANGE' },

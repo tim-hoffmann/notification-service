@@ -16,6 +16,7 @@ import { TEMPLATE_REPOSITORY } from '../../core/constants/di-tokens.constant';
     {
       provide: DynamoDBClient,
       useFactory: (config: ConfigType<typeof dynamoDbConfig>) => {
+        console.log(config);
         return new DynamoDBClient({ ...config });
       },
       inject: [dynamoDbConfig.KEY],

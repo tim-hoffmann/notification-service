@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { WebModule } from '../src/web/web.module';
+import dynamoDbConfig from '../src/infrastructure/dynamo-db/dynamo-db.config';
 
 describe('TemplateController (e2e)', () => {
   let app: INestApplication;
@@ -11,7 +12,14 @@ describe('TemplateController (e2e)', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [WebModule],
-    }).compile();
+    })
+      .overrideProvider(dynamoDbConfig.KEY)
+      .useValue({
+        region: 'local',
+        endpoint: process.env.MOCK_DYNAMODB_ENDPOINT,
+        tableName: 'notification-service',
+      })
+      .compile();
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));

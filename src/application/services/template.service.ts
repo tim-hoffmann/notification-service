@@ -1,11 +1,13 @@
 import { Mapper } from '@automapper/core';
 import { InjectMapper } from '@automapper/nestjs';
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { DEFAULT_LOCALE, TEMPLATE_REPOSITORY } from '../../core/constants/di-tokens.constant';
+import { ConfigType } from '@nestjs/config';
+import { TEMPLATE_REPOSITORY } from '../../core/constants/di-tokens.constant';
 import { TemplateLocale } from '../../core/entities/template-locale.entity';
 import { Template } from '../../core/entities/template.entity';
 import { PaginationResult } from '../../core/interfaces/pagination-result.interface';
 import { TemplateRepository } from '../../core/repositories/template.repository';
+import applicationConfig from '../application.config';
 import { CreateTemplateLocaleDto } from '../dtos/create-template-locale.dto';
 import { CreateTemplateDto } from '../dtos/create-template.dto';
 import { PatchTemplateDto } from '../dtos/patch-template.dto';
@@ -14,11 +16,15 @@ import { ReadTemplateDto } from '../dtos/read-template.dto';
 
 @Injectable()
 export class TemplateService {
+  private readonly defaultLocale: string;
+
   constructor(
     @Inject(TEMPLATE_REPOSITORY) private readonly templateRepository: TemplateRepository,
-    @Inject(DEFAULT_LOCALE) private readonly defaultLocale: string,
+    @Inject(applicationConfig.KEY) readonly config: ConfigType<typeof applicationConfig>,
     @InjectMapper() private readonly mapper: Mapper,
-  ) {}
+  ) {
+    this.defaultLocale = config.defaultLocale;
+  }
 
   async create(tenantId: string, dto: CreateTemplateDto): Promise<ReadTemplateDto> {
     const entity = this.mapper.map(dto, Template, CreateTemplateDto, {

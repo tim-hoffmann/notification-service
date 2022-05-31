@@ -101,11 +101,12 @@ describe('TemplateController (e2e)', () => {
     it('should patch the template', async () => {
       const response = await request(app.getHttpServer())
         .patch(`/${tenant}/templates/${id}`)
-        .send({ textTemplate: 'Das ist ein Patch Test!' });
+        .send({ textTemplate: 'Das ist ein Patch Test!', from: 'patch@test.de' });
 
       expect(response.statusCode).toBe(200);
-      // expect(response.body.id).toBe(id);
-      // expect(response.body.textTemplate).toBe('Das ist ein Patch Test!');
+      expect(response.body.id).toBe(id);
+      expect(response.body.textTemplate).toBe('Das ist ein Patch Test!');
+      expect(response.body.from).toBe('patch@test.de');
     });
   });
 

@@ -5,6 +5,7 @@ import { CreateTemplateLocaleDto } from '../../dtos/create-template-locale.dto';
 import { ReadTemplateLocaleDto } from '../../dtos/read-template-locale.dto';
 import { CreateTemplateDto } from '../../dtos/create-template.dto';
 import { TemplateLocale } from '../../../core/entities/template-locale.entity';
+import { PatchTemplateDto } from '../../dtos/patch-template.dto';
 
 @Injectable()
 export class TemplateLocaleProfile extends AutomapperProfile {
@@ -18,6 +19,11 @@ export class TemplateLocaleProfile extends AutomapperProfile {
       mapper.createMap(TemplateLocale, ReadTemplateLocaleDto);
 
       mapper.createMap(CreateTemplateDto, TemplateLocale).forMember(
+        (dst) => dst.locale,
+        mapWithArguments((_, { locale }) => locale),
+      );
+
+      mapper.createMap(PatchTemplateDto, TemplateLocale).forMember(
         (dst) => dst.locale,
         mapWithArguments((_, { locale }) => locale),
       );

@@ -22,15 +22,17 @@ export class TemplateMasterProfile extends AutomapperProfile {
         )
         .forMember(
           (dst) => dst.gsiSortKey,
-          mapWithArguments((src, { now }) => `${ModelType.TEMPLATE}#${now ?? src.updatedAt}`),
+          mapWithArguments(
+            (src, { updatedAt }) => `${ModelType.TEMPLATE}#${updatedAt ?? src.updatedAt}`,
+          ),
         )
         .forMember(
           (dst) => dst.createdAt,
-          mapWithArguments((src, { now }) => now ?? src.createdAt),
+          mapWithArguments((src, { createdAt }) => createdAt ?? src.createdAt),
         )
         .forMember(
           (dst) => dst.updatedAt,
-          mapWithArguments((src, { now }) => now ?? src.updatedAt),
+          mapWithArguments((src, { updatedAt }) => updatedAt ?? src.updatedAt),
         )
         .forMember(
           (dst) => dst.id,

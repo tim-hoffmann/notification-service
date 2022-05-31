@@ -91,11 +91,15 @@ export class TemplateService {
     return { ...result, items: dtos };
   }
 
-  async patch(tenantId: string, id: string, dto: PatchTemplateDto): Promise<ReadTemplateDto> {
-    const locale = this.defaultLocale;
+  async patch(
+    tenantId: string,
+    id: string,
+    dto: PatchTemplateDto,
+    locale: string = this.defaultLocale,
+  ): Promise<ReadTemplateDto> {
     const currentEntity = await this.templateRepository.findOne(tenantId, id, locale);
     this.mapper.map(dto, Template, PatchTemplateDto, currentEntity, {
-      extraArguments: { tenantId },
+      extraArguments: { tenantId, locale: currentEntity.localeFields.locale },
     });
     const patchedEntity = await this.templateRepository.update(tenantId, id, locale, currentEntity);
     const readDto = this.mapper.map(patchedEntity, ReadTemplateDto, Template);

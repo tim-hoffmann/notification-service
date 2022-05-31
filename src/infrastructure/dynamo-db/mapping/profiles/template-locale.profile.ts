@@ -20,8 +20,10 @@ export class TemplateProfile extends AutomapperProfile {
         .forMember(
           (dst) => dst.itemKey,
           mapWithArguments(
-            (src, { id }) =>
-              `${id ?? src.id}#${ModelType.TEMPLATE_LOCALE}#${src.localeFields.locale}`,
+            (src, { id, localeFields }) =>
+              `${id ?? src.id}#${ModelType.TEMPLATE_LOCALE}#${
+                (localeFields as any)?.locale ?? src.localeFields.locale
+              }`,
           ),
         )
         .forMember((dst) => dst.gsiSortKey, fromValue(undefined))
@@ -31,27 +33,38 @@ export class TemplateProfile extends AutomapperProfile {
         )
         .forMember(
           (dst) => dst.createdAt,
-          mapWithArguments((src, { now }) => now ?? src.createdAt),
+          mapWithArguments((src, { createdAt }) => createdAt ?? src.createdAt),
         )
         .forMember(
           (dst) => dst.updatedAt,
-          mapWithArguments((src, { now }) => now ?? src.updatedAt),
+          mapWithArguments((src, { updatedAt }) => updatedAt ?? src.updatedAt),
         )
         .forMember(
           (dst) => dst.textTemplate,
-          mapFrom((src) => src.localeFields.textTemplate),
+          mapWithArguments(
+            (src, { localeFields }) =>
+              (localeFields as any)?.textTemplate ?? src.localeFields.textTemplate,
+          ),
         )
         .forMember(
           (dst) => dst.subjectTemplate,
-          mapFrom((src) => src.localeFields.subjectTemplate),
+          mapWithArguments(
+            (src, { localeFields }) =>
+              (localeFields as any)?.subjectTemplate ?? src.localeFields.subjectTemplate,
+          ),
         )
         .forMember(
           (dst) => dst.htmlTemplate,
-          mapFrom((src) => src.localeFields.htmlTemplate),
+          mapWithArguments(
+            (src, { localeFields }) =>
+              (localeFields as any)?.htmlTemplate ?? src.localeFields.htmlTemplate,
+          ),
         )
         .forMember(
           (dst) => dst.locale,
-          mapFrom((src) => src.localeFields.locale),
+          mapWithArguments(
+            (src, { localeFields }) => (localeFields as any)?.locale ?? src.localeFields.locale,
+          ),
         );
 
       mapper.createMap(TemplateLocaleModel, TemplateLocale);
@@ -91,11 +104,11 @@ export class TemplateProfile extends AutomapperProfile {
         .forMember((dst) => dst.gsiSortKey, fromValue(undefined))
         .forMember(
           (dst) => dst.createdAt,
-          mapWithArguments((src, { now }) => now ?? src.createdAt),
+          mapWithArguments((src, { createdAt }) => createdAt ?? src.createdAt),
         )
         .forMember(
           (dst) => dst.updatedAt,
-          mapWithArguments((src, { now }) => now ?? src.updatedAt),
+          mapWithArguments((src, { updatedAt }) => updatedAt ?? src.updatedAt),
         )
         .forMember(
           (dst) => dst.name,

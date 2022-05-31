@@ -1,14 +1,14 @@
 import { AutoMap } from '@automapper/classes';
-import { IsByteLength, IsEnum, IsNotEmpty, IsOptional, Matches } from 'class-validator';
+import { IsByteLength, IsEnum, IsOptional } from 'class-validator';
 import { TransportType } from '../../core/enums/transport-type.enum';
 
 export class PatchTemplateDto {
   @AutoMap()
-  @IsNotEmpty()
+  @IsOptional()
   name?: string;
 
   @AutoMap()
-  @IsNotEmpty()
+  @IsOptional()
   from?: string;
 
   @AutoMap()
@@ -16,15 +16,16 @@ export class PatchTemplateDto {
   dataSchema?: string;
 
   @AutoMap()
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(TransportType)
   transportType?: TransportType;
 
   @AutoMap()
+  @IsOptional()
   bcc?: string[];
 
   @AutoMap()
-  @IsNotEmpty()
+  @IsOptional()
   textTemplate?: string;
 
   @AutoMap()
@@ -35,9 +36,4 @@ export class PatchTemplateDto {
   @AutoMap()
   @IsOptional()
   subjectTemplate?: string;
-
-  @AutoMap()
-  @IsOptional()
-  @Matches(/^[A-Za-z]{2,4}([_-][A-Za-z]{4})?([_-]([A-Za-z]{2}|[0-9]{3}))?$/)
-  locale?: string;
 }

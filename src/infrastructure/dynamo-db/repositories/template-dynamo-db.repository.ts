@@ -35,7 +35,8 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
 
   async create(entity: Template): Promise<Template> {
     const id = await this.uniqueIdService.generate();
-    const opts = { extraArguments: { now: getDateString(), id } };
+    const now = getDateString();
+    const opts = { extraArguments: { createdAt: now, updatedAt: now, id } };
 
     const templateModel = this.mapper.map(entity, TemplateModel, Template, opts);
     const templateLocaleModel = this.mapper.map(entity, TemplateLocaleModel, Template, opts);
@@ -62,7 +63,7 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
     });
 
     const templateLocaleModel = this.mapper.map(entity, TemplateLocaleModel, TemplateLocale, {
-      extraArguments: { ...templateModel, now, id },
+      extraArguments: { ...templateModel, createdAt: now, updatedAt: now, id },
     });
 
     await this.db.put({ TableName: this.tableName, Item: templateLocaleModel });
@@ -149,8 +150,60 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
     return locales;
   }
 
-  update(tenantId: string, id: string, locale: string, update: Template): Promise<Template> {
-    throw new NotImplementedException();
+  async update(tenantId: string, id: string, locale: string, update: Template): Promise<Template> {
+    const { Items: models } = await this.db.query({
+      TableName: this.tableName,
+      ExpressionAttributeValues: {
+        ':tenantId': tenantId,
+        ':itemKey': `${id}#`,
+      },
+      ExpressionAttributeNames: {
+        '#tenantId': 'tenantId',
+        '#itemKey': 'itemKey',
+      },
+      KeyConditionExpression: '#tenantId = :tenantId and begins_with(#itemKey, :itemKey)',
+    });
+
+    const templateModel = models?.find((m) => m.type === ModelType.TEMPLATE) as
+      | TemplateModel
+      | undefined;
+    const templateLocaleModelToUpdate = models?.find((m) => m.locale === locale) as
+      | TemplateLocaleModel
+      | undefined;
+    const otherTemplateLocaleModels = models?.filter(
+      (m) => m.type === ModelType.TEMPLATE_LOCALE && m.locale !== locale,
+    ) as TemplateLocaleModel[] | undefined;
+
+    if (
+      !models?.length ||
+      !templateModel ||
+      !otherTemplateLocaleModels ||
+      !templateLocaleModelToUpdate
+    ) {
+      throw new EntityNotFoundException();
+    }
+
+    const now = getDateString();
+
+    this.mapper.map(update, TemplateModel, Template, templateModel, {
+      extraArguments: { updatedAt: now },
+    });
+    this.mapper.map(update, TemplateLocaleModel, Template, templateLocaleModelToUpdate, {
+      extraArguments: { updatedAt: now },
+    });
+    otherTemplateLocaleModels.forEach((_, i) =>
+      this.mapper.map(update, TemplateLocaleModel, Template, otherTemplateLocaleModels[i], {
+        extraArguments: { localeFields: otherTemplateLocaleModels[i], updatedAt: now },
+      }),
+    );
+
+    await batchPut(this.db, this.tableName, [
+      templateModel,
+      templateLocaleModelToUpdate,
+      ...otherTemplateLocaleModels,
+    ]);
+
+    return update;
   }
 
   async delete(tenantId: string, id: string, locale?: string): Promise<void> {

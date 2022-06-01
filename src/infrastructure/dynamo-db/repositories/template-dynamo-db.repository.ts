@@ -150,7 +150,13 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
     return locales;
   }
 
-  async update(tenantId: string, id: string, locale: string, update: Template): Promise<Template> {
+  async update(
+    tenantId: string,
+    id: string,
+    locale: string,
+    update: Partial<Template>,
+  ): Promise<Template> {
+    // 1. Get all models
     const { Items: models } = await this.db.query({
       TableName: this.tableName,
       ExpressionAttributeValues: {
@@ -164,6 +170,7 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
       KeyConditionExpression: '#tenantId = :tenantId and begins_with(#itemKey, :itemKey)',
     });
 
+    // 2. Filter TemplateModel, TemplateLocaleModel to update and rest of TemplateLocaleModels
     const templateModel = models?.find((m) => m.type === ModelType.TEMPLATE) as
       | TemplateModel
       | undefined;
@@ -174,6 +181,7 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
       (m) => m.type === ModelType.TEMPLATE_LOCALE && m.locale !== locale,
     ) as TemplateLocaleModel[] | undefined;
 
+    // 3. Check models exist
     if (
       !models?.length ||
       !templateModel ||
@@ -184,16 +192,15 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
     }
 
     const now = getDateString();
-
     this.mapper.map(update, TemplateModel, Template, templateModel, {
-      extraArguments: { updatedAt: now },
+      extraArguments: { updatedAt: now, id },
     });
     this.mapper.map(update, TemplateLocaleModel, Template, templateLocaleModelToUpdate, {
-      extraArguments: { updatedAt: now },
+      extraArguments: { updatedAt: now, id },
     });
     otherTemplateLocaleModels.forEach((_, i) =>
       this.mapper.map(update, TemplateLocaleModel, Template, otherTemplateLocaleModels[i], {
-        extraArguments: { localeFields: otherTemplateLocaleModels[i], updatedAt: now },
+        extraArguments: { localeFields: otherTemplateLocaleModels[i], updatedAt: now, id },
       }),
     );
 
@@ -203,7 +210,13 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
       ...otherTemplateLocaleModels,
     ]);
 
-    return update;
+    const patchedEntity = this.mapper.map(
+      templateLocaleModelToUpdate,
+      Template,
+      TemplateLocaleModel,
+    );
+
+    return patchedEntity;
   }
 
   async delete(tenantId: string, id: string, locale?: string): Promise<void> {

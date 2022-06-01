@@ -42,9 +42,13 @@ export class TemplateProfile extends AutomapperProfile {
         .forMember((dst) => dst.updatedAt, ignore())
         .forMember(
           (dst) => dst.localeFields,
-          mapWithArguments((src, { locale }) =>
-            this.mapper.map(src, TemplateLocale, PatchTemplateDto, { extraArguments: { locale } }),
-          ),
+          mapWithArguments((src, { locale }) => {
+            const r = this.mapper.map(src, TemplateLocale, PatchTemplateDto, {
+              extraArguments: { locale },
+            });
+
+            return r;
+          }),
         );
 
       mapper

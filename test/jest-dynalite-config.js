@@ -74,7 +74,7 @@ module.exports = {
           id: 'B2K4nfcZNi0mPMCH',
           locale: 'en-US',
           name: 'test2',
-          subjectTemplate: 'Hallo',
+          subjectTemplate: 'Hallo das ist der Betreff',
           textTemplate: 'Das ist ein Test!',
           transportType: 'Email',
           type: 'TEMPLATE_LOCALE',

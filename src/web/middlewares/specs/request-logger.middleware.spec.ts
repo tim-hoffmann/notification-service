@@ -1,14 +1,3 @@
-/*
- * Projekt: Biobedded Logging
- * Programmierer: Tim Hoffmann
- * Projektbeginn: 07.04.2022
- * Programmierumgebung: VSCode
- * Plattform: macOS Monterey
- * Copyright: biobedded system GmbH 2022
- * ID der Datei: /src/middlewares/specs/request-logger.middleware.spec.ts
- * 11.04.2022 12:05 Uhr
- */
-
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import webConfig from '../../web.config';

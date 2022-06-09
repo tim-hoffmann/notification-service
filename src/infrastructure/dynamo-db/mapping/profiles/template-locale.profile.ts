@@ -7,7 +7,7 @@ import { Template } from '../../../../core/entities/template.entity';
 import { TemplateLocale } from '../../../../core/entities/template-locale.entity';
 
 @Injectable()
-export class TemplateProfile extends AutomapperProfile {
+export class TemplateLocaleProfile extends AutomapperProfile {
   constructor(@InjectMapper() mapper: Mapper) {
     super(mapper);
   }
@@ -20,10 +20,7 @@ export class TemplateProfile extends AutomapperProfile {
         .forMember(
           (dst) => dst.itemKey,
           mapWithArguments(
-            (src, { id, localeFields }) =>
-              `${id ?? src.id}#${ModelType.TEMPLATE_LOCALE}#${
-                (localeFields as any)?.locale ?? src.localeFields.locale
-              }`,
+            (src, { id, locale }) => `${id ?? src.id}#${ModelType.TEMPLATE_LOCALE}#${locale}`,
           ),
         )
         .forMember((dst) => dst.gsiSortKey, fromValue(undefined))
@@ -41,30 +38,31 @@ export class TemplateProfile extends AutomapperProfile {
         )
         .forMember(
           (dst) => dst.textTemplate,
-          mapWithArguments(
-            (src, { localeFields }) =>
-              (localeFields as any)?.textTemplate ?? src.localeFields.textTemplate,
+          mapWithArguments((src, { localeFields }) =>
+            localeFields
+              ? (localeFields as TemplateLocaleModel)?.textTemplate
+              : src.localeFields?.textTemplate,
           ),
         )
         .forMember(
           (dst) => dst.subjectTemplate,
-          mapWithArguments(
-            (src, { localeFields }) =>
-              (localeFields as any)?.subjectTemplate ?? src.localeFields.subjectTemplate,
+          mapWithArguments((src, { localeFields }) =>
+            localeFields
+              ? (localeFields as TemplateLocaleModel)?.subjectTemplate
+              : src.localeFields?.subjectTemplate,
           ),
         )
         .forMember(
           (dst) => dst.htmlTemplate,
-          mapWithArguments(
-            (src, { localeFields }) =>
-              (localeFields as any)?.htmlTemplate ?? src.localeFields.htmlTemplate,
+          mapWithArguments((src, { localeFields }) =>
+            localeFields
+              ? (localeFields as TemplateLocaleModel)?.htmlTemplate
+              : src.localeFields?.htmlTemplate,
           ),
         )
         .forMember(
           (dst) => dst.locale,
-          mapWithArguments(
-            (src, { localeFields }) => (localeFields as any)?.locale ?? src.localeFields.locale,
-          ),
+          mapWithArguments((src, { locale }) => locale),
         );
 
       mapper.createMap(TemplateLocaleModel, TemplateLocale);

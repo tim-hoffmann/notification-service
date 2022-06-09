@@ -3,8 +3,8 @@ import { ConfigModule, ConfigType } from '@nestjs/config';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { NanoidModule } from '../nanoid/nanoid.module';
 import dynamoDbConfig from './dynamo-db.config';
-import { TemplateMasterProfile } from './mapping/profiles/template.profile';
-import { TemplateProfile } from './mapping/profiles/template-locale.profile';
+import { TemplateProfile } from './mapping/profiles/template.profile';
+import { TemplateLocaleProfile } from './mapping/profiles/template-locale.profile';
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
 import { CoreModule } from '../../core/core.module';
 import { TemplateDynamoDbRepository } from './repositories/template-dynamo-db.repository';
@@ -28,7 +28,7 @@ import { TEMPLATE_REPOSITORY } from '../../core/constants/di-tokens.constant';
     },
     { provide: TEMPLATE_REPOSITORY, useClass: TemplateDynamoDbRepository },
     TemplateProfile,
-    TemplateMasterProfile,
+    TemplateLocaleProfile,
   ],
   exports: [TEMPLATE_REPOSITORY],
 })

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Mapper } from '@automapper/core';
 import { InjectMapper } from '@automapper/nestjs';
-import { Inject, NotImplementedException } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { UNIQUE_ID_SERVICE } from '../../../core/constants/di-tokens.constant';
 import { Template } from '../../../core/entities/template.entity';
 import { TemplateRepository } from '../../../core/repositories/template.repository';
@@ -11,7 +11,7 @@ import { TemplateLocaleModel } from '../models/template-locale.model';
 import { TemplateModel } from '../models/template.model';
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
 import { getDateString } from '../../../core/utils/date.util';
-import { ConfigService, ConfigType } from '@nestjs/config';
+import { ConfigType } from '@nestjs/config';
 import { batchPut } from '../utils/batch-put.util';
 import { EntityNotFoundException } from '../../../core/exceptions/entity-not-found.exception';
 import { TemplateLocale } from '../../../core/entities/template-locale.entity';
@@ -196,11 +196,17 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
       extraArguments: { updatedAt: now, id },
     });
     this.mapper.map(update, TemplateLocaleModel, Template, templateLocaleModelToUpdate, {
-      extraArguments: { updatedAt: now, id },
+      extraArguments: { updatedAt: now, id, locale },
     });
+
     otherTemplateLocaleModels.forEach((_, i) =>
       this.mapper.map(update, TemplateLocaleModel, Template, otherTemplateLocaleModels[i], {
-        extraArguments: { localeFields: otherTemplateLocaleModels[i], updatedAt: now, id },
+        extraArguments: {
+          localeFields: otherTemplateLocaleModels[i],
+          updatedAt: now,
+          id,
+          locale: otherTemplateLocaleModels[i].locale,
+        },
       }),
     );
 

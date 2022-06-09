@@ -6,7 +6,7 @@ import { TemplateModel } from '../../models/template.model';
 import { ModelType } from '../../enums/model-type.enum';
 
 @Injectable()
-export class TemplateMasterProfile extends AutomapperProfile {
+export class TemplateProfile extends AutomapperProfile {
   constructor(@InjectMapper() mapper: Mapper) {
     super(mapper);
   }

@@ -46,7 +46,7 @@
   "devDependencies": {
     "@aws-sdk/types": "^3.0.0",
     "@nestjs/cli": "^8.0.0",
-    "@nestjs/schematics": "^8.0.0",
+    "@nestjs/schematics": "^8.0.11",
     "@nestjs/testing": "^8.0.0",
     "@saithodev/semantic-release-backmerge": "^2.1.2",
     "@semantic-release/changelog": "^6.0.1",

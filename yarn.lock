@@ -394,13 +394,13 @@
   dependencies:
     tslib "^2.3.0"
 
-"@aws-sdk/lib-dynamodb@^3.49.0":
-  version "3.49.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-dynamodb/-/lib-dynamodb-3.49.0.tgz#20535a280df2b81f260c2afc1a48a7b0a9baad2f"
-  integrity sha512-8Pn1BbYbCIhIovNOnXy31qYe29s0cSyDZPmA+zsmMvGrTrDYMDqF0+xeQ2XQ+mLURiaBHsAxk/q1j2uZGUrStA==
+"@aws-sdk/lib-dynamodb@^3.112.0":
+  version "3.112.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-dynamodb/-/lib-dynamodb-3.112.0.tgz#5475b0f5031a6080399cc1f7c6cd0c9492522926"
+  integrity sha512-g+EFEbibLK/dGQfX4RC3jluEH1K+cbeKG7JvN49Uq5J1W2CeJ+EyJ5SHt459qW/+SupmG1i7Qc4sHVsSl+YlvQ==
   dependencies:
-    "@aws-sdk/util-dynamodb" "3.49.0"
-    tslib "^2.3.0"
+    "@aws-sdk/util-dynamodb" "3.112.0"
+    tslib "^2.3.1"
 
 "@aws-sdk/middleware-content-length@3.49.0":
   version "3.49.0"
@@ -671,12 +671,12 @@
     "@aws-sdk/types" "3.49.0"
     tslib "^2.3.0"
 
-"@aws-sdk/util-dynamodb@3.49.0":
-  version "3.49.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/util-dynamodb/-/util-dynamodb-3.49.0.tgz#c7a99dc3ed9a6bf65fbc503544e85a9e2b3fb95c"
-  integrity sha512-TOvcUPiNNRPEeSuTBgnFT3gm6BNp5gA32qF9moSOVp1hUjjWWJJ3uiTpfE2m/5cZj/Fndgg3ixrLoUPSs8eH1A==
+"@aws-sdk/util-dynamodb@3.112.0":
+  version "3.112.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/util-dynamodb/-/util-dynamodb-3.112.0.tgz#548f2be93ddd8b6306104f5e2e05a109e8d9eb60"
+  integrity sha512-OcCOzR+XasP5dLuwtUQFJ63Qdc6efqcJYG0yMfGPa3T44qMJZRLfjUuoSWdnKEgQJYRRKZM/23TPayOowio2Ig==
   dependencies:
-    tslib "^2.3.0"
+    tslib "^2.3.1"
 
 "@aws-sdk/util-hex-encoding@3.49.0":
   version "3.49.0"
@@ -8924,7 +8924,7 @@ tsconfig-paths@3.12.0, tsconfig-paths@^3.10.1, tsconfig-paths@^3.9.0:
     minimist "^1.2.0"
     strip-bom "^3.0.0"
 
-tslib@2.3.1, tslib@^2.1.0, tslib@^2.3.0:
+tslib@2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.1.tgz#e8a335add5ceae51aa261d32a490158ef042ef01"
   integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==
@@ -8933,6 +8933,11 @@ tslib@^1.10.0, tslib@^1.11.1, tslib@^1.8.1, tslib@^1.9.0:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
+
+tslib@^2.1.0, tslib@^2.3.0, tslib@^2.3.1:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.0.tgz#7cecaa7f073ce680a05847aa77be941098f36dc3"
+  integrity sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==
 
 tsutils@^3.21.0:
   version "3.21.0"

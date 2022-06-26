@@ -41,7 +41,7 @@
     "rimraf": "^3.0.2",
     "rxjs": "^7.5.5",
     "swagger-ui-express": "^4.4.0",
-    "tslib": "^1.10.0"
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@aws-sdk/types": "^3.110.0",

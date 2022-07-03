@@ -8,8 +8,7 @@ on:
       - 'feature/**'
       - 'release/**'
       - 'bugfix/**'
-  pull_request:
-    branches: [ develop ]
+      - 'dependabot/**'
 
 jobs:
   build:

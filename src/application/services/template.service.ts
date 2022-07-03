@@ -27,11 +27,11 @@ export class TemplateService {
   }
 
   async create(tenantId: string, dto: CreateTemplateDto): Promise<ReadTemplateDto> {
-    const entity = this.mapper.map(dto, Template, CreateTemplateDto, {
-      extraArguments: { tenantId, locale: this.defaultLocale },
+    const entity = this.mapper.map(dto, CreateTemplateDto, Template, {
+      extraArgs: () => ({ tenantId, locale: this.defaultLocale }),
     });
     const createdEntity = await this.templateRepository.create(entity);
-    const readDto = this.mapper.map(createdEntity, ReadTemplateDto, Template);
+    const readDto = this.mapper.map(createdEntity, Template, ReadTemplateDto);
 
     return readDto;
   }
@@ -49,11 +49,11 @@ export class TemplateService {
       throw new BadRequestException(`Template with locale already exists: ${dto.locale}`);
     }
 
-    const entity = this.mapper.map(dto, TemplateLocale, CreateTemplateLocaleDto, {
-      extraArguments: { tenantId, id },
+    const entity = this.mapper.map(dto, CreateTemplateLocaleDto, TemplateLocale, {
+      extraArgs: () => ({ tenantId, id }),
     });
     const createdEntity = await this.templateRepository.createLocale(tenantId, id, entity);
-    const readDto = this.mapper.map(createdEntity, ReadTemplateLocaleDto, TemplateLocale);
+    const readDto = this.mapper.map(createdEntity, TemplateLocale, ReadTemplateLocaleDto);
 
     return readDto;
   }
@@ -64,7 +64,7 @@ export class TemplateService {
     locale: string = this.defaultLocale,
   ): Promise<ReadTemplateDto> {
     const entity = await this.templateRepository.findOne(tenantId, id, locale);
-    const dto = this.mapper.map(entity, ReadTemplateDto, Template);
+    const dto = this.mapper.map(entity, Template, ReadTemplateDto);
 
     return dto;
   }
@@ -86,7 +86,7 @@ export class TemplateService {
     after?: string,
   ): Promise<PaginationResult<ReadTemplateDto>> {
     const result = await this.templateRepository.find(tenantId, first, before, after);
-    const dtos = this.mapper.mapArray(result.items, ReadTemplateDto, Template);
+    const dtos = this.mapper.mapArray(result.items, Template, ReadTemplateDto);
 
     return { ...result, items: dtos };
   }
@@ -97,11 +97,11 @@ export class TemplateService {
     dto: PatchTemplateDto,
     locale: string = this.defaultLocale,
   ): Promise<ReadTemplateDto> {
-    const partialEntity = this.mapper.map(dto, Template, PatchTemplateDto, {
-      extraArguments: { tenantId, locale },
+    const partialEntity = this.mapper.map(dto, PatchTemplateDto, Template, {
+      extraArgs: () => ({ tenantId, locale }),
     });
     const patchedEntity = await this.templateRepository.update(tenantId, id, locale, partialEntity);
-    const readDto = this.mapper.map(patchedEntity, ReadTemplateDto, Template);
+    const readDto = this.mapper.map(patchedEntity, Template, ReadTemplateDto);
 
     return readDto;
   }

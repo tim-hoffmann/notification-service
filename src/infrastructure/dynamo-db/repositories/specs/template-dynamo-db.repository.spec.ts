@@ -73,8 +73,7 @@ describe('TemplateDynamoDbRepository', () => {
         {
           provide: getMapperToken(),
           useValue: createMapper({
-            name: '',
-            pluginInitializer: classes,
+            strategyInitializer: classes(),
             namingConventions: new CamelCaseNamingConvention(),
           }),
         },

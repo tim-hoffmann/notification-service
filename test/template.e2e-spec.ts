@@ -3,6 +3,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { WebModule } from '../src/web/web.module';
 import dynamoDbConfig from '../src/infrastructure/dynamo-db/dynamo-db.config';
+import 'reflect-metadata';
 
 describe('TemplateController (e2e)', () => {
   let app: INestApplication;

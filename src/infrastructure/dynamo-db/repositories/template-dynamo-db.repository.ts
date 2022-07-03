@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Mapper } from '@automapper/core';
+import { MapOptions, Mapper } from '@automapper/core';
 import { InjectMapper } from '@automapper/nestjs';
 import { Inject } from '@nestjs/common';
 import { UNIQUE_ID_SERVICE } from '../../../core/constants/di-tokens.constant';
@@ -36,14 +36,16 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
   async create(entity: Template): Promise<Template> {
     const id = await this.uniqueIdService.generate();
     const now = getDateString();
-    const opts = { extraArguments: { createdAt: now, updatedAt: now, id } };
+    const opts = {
+      extraArgs: () => ({ createdAt: now, updatedAt: now, id }),
+    };
 
-    const templateModel = this.mapper.map(entity, TemplateModel, Template, opts);
-    const templateLocaleModel = this.mapper.map(entity, TemplateLocaleModel, Template, opts);
+    const templateModel = this.mapper.map(entity, Template, TemplateModel, opts);
+    const templateLocaleModel = this.mapper.map(entity, Template, TemplateLocaleModel, opts);
 
     await batchPut(this.db, this.tableName, [templateModel, templateLocaleModel]);
 
-    const createdEntity = this.mapper.map(templateLocaleModel, Template, TemplateLocaleModel);
+    const createdEntity = this.mapper.map(templateLocaleModel, TemplateLocaleModel, Template);
 
     return createdEntity;
   }
@@ -62,8 +64,8 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
       },
     });
 
-    const templateLocaleModel = this.mapper.map(entity, TemplateLocaleModel, TemplateLocale, {
-      extraArguments: { ...templateModel, createdAt: now, updatedAt: now, id },
+    const templateLocaleModel = this.mapper.map(entity, TemplateLocale, TemplateLocaleModel, {
+      extraArgs: () => ({ ...templateModel, createdAt: now, updatedAt: now, id }),
     });
 
     await this.db.put({ TableName: this.tableName, Item: templateLocaleModel });
@@ -100,7 +102,7 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
       return { items: [] };
     }
 
-    const entities = this.mapper.mapArray(models.slice(0, first), Template, TemplateModel);
+    const entities = this.mapper.mapArray(models.slice(0, first), TemplateModel, Template);
     const startCursor = createPrevCursor(models, after, before, LastEvaluatedKey);
     const endCursor = createNextCursor(models, before, first, LastEvaluatedKey);
 
@@ -126,7 +128,7 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
       throw new EntityNotFoundException();
     }
 
-    const entity = this.mapper.map(model, Template, TemplateLocaleModel);
+    const entity = this.mapper.map(model, TemplateLocaleModel, Template);
 
     return entity;
   }
@@ -192,21 +194,21 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
     }
 
     const now = getDateString();
-    this.mapper.map(update, TemplateModel, Template, templateModel, {
-      extraArguments: { updatedAt: now, id },
+    this.mapper.mutate(update, templateModel, Template, TemplateModel, {
+      extraArgs: () => ({ updatedAt: now, id }),
     });
-    this.mapper.map(update, TemplateLocaleModel, Template, templateLocaleModelToUpdate, {
-      extraArguments: { updatedAt: now, id, locale },
+    this.mapper.mutate(update, templateLocaleModelToUpdate, Template, TemplateLocaleModel, {
+      extraArgs: () => ({ updatedAt: now, id, locale }),
     });
 
     otherTemplateLocaleModels.forEach((_, i) =>
-      this.mapper.map(update, TemplateLocaleModel, Template, otherTemplateLocaleModels[i], {
-        extraArguments: {
+      this.mapper.mutate(update, otherTemplateLocaleModels[i], Template, TemplateLocaleModel, {
+        extraArgs: () => ({
           localeFields: otherTemplateLocaleModels[i],
           updatedAt: now,
           id,
           locale: otherTemplateLocaleModels[i].locale,
-        },
+        }),
       }),
     );
 
@@ -218,8 +220,8 @@ export class TemplateDynamoDbRepository implements TemplateRepository {
 
     const patchedEntity = this.mapper.map(
       templateLocaleModelToUpdate,
-      Template,
       TemplateLocaleModel,
+      Template,
     );
 
     return patchedEntity;

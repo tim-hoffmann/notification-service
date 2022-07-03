@@ -20,7 +20,7 @@ export class CreateTemplateDto {
   @IsEnum(TransportType)
   transportType!: TransportType;
 
-  @AutoMap()
+  @AutoMap(() => [String])
   bcc?: string[];
 
   @AutoMap()

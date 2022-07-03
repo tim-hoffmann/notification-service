@@ -13,6 +13,8 @@ import { TEMPLATE_REPOSITORY } from '../../core/constants/di-tokens.constant';
 @Module({
   imports: [CoreModule, ConfigModule.forFeature(dynamoDbConfig), NanoidModule],
   providers: [
+    TemplateProfile,
+    TemplateLocaleProfile,
     {
       provide: DynamoDBClient,
       useFactory: (config: ConfigType<typeof dynamoDbConfig>) => new DynamoDBClient({ ...config }),
@@ -27,8 +29,6 @@ import { TEMPLATE_REPOSITORY } from '../../core/constants/di-tokens.constant';
       inject: [DynamoDBClient],
     },
     { provide: TEMPLATE_REPOSITORY, useClass: TemplateDynamoDbRepository },
-    TemplateProfile,
-    TemplateLocaleProfile,
   ],
   exports: [TEMPLATE_REPOSITORY],
 })

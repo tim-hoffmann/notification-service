@@ -7,5 +7,5 @@ export class TemplateModel extends BaseModel {
   @AutoMap() from!: string;
   @AutoMap() transportType!: TransportType;
   @AutoMap() dataSchema?: string;
-  @AutoMap() bcc?: string[];
+  @AutoMap(() => [String]) bcc?: string[];
 }

@@ -9,6 +9,6 @@ export class Template extends Base {
   @AutoMap() from!: string;
   @AutoMap() dataSchema?: string;
   @AutoMap() transportType!: TransportType;
-  @AutoMap() bcc?: string[];
-  @AutoMap({ typeFn: () => TemplateLocale }) localeFields!: TemplateLocale;
+  @AutoMap(() => [String]) bcc?: string[];
+  @AutoMap({ type: () => TemplateLocale, depth: 0 }) localeFields!: TemplateLocale;
 }

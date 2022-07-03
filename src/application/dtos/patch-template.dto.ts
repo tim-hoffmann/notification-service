@@ -20,7 +20,7 @@ export class PatchTemplateDto {
   @IsEnum(TransportType)
   transportType?: TransportType;
 
-  @AutoMap()
+  @AutoMap(() => [String])
   @IsOptional()
   bcc?: string[];
 

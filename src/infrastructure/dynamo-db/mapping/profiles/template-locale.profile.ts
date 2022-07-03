@@ -1,5 +1,12 @@
 import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
-import { fromValue, mapFrom, Mapper, mapWithArguments } from '@automapper/core';
+import {
+  createMap,
+  fromValue,
+  Mapper,
+  mapWithArguments,
+  forMember,
+  mapFrom,
+} from '@automapper/core';
 import { Injectable } from '@nestjs/common';
 import { ModelType } from '../../enums/model-type.enum';
 import { TemplateLocaleModel } from '../../models/template-locale.model';
@@ -12,122 +19,129 @@ export class TemplateLocaleProfile extends AutomapperProfile {
     super(mapper);
   }
 
-  mapProfile() {
+  override get profile() {
     return (mapper: Mapper) => {
-      mapper
-        .createMap(Template, TemplateLocaleModel)
-        .forMember((dst) => dst.type, fromValue(ModelType.TEMPLATE_LOCALE))
-        .forMember(
+      createMap(
+        mapper,
+        Template,
+        TemplateLocaleModel,
+        forMember((dst) => dst.type, fromValue(ModelType.TEMPLATE_LOCALE)),
+        forMember(
           (dst) => dst.itemKey,
           mapWithArguments(
             (src, { id, locale }) => `${id ?? src.id}#${ModelType.TEMPLATE_LOCALE}#${locale}`,
           ),
-        )
-        .forMember((dst) => dst.gsiSortKey, fromValue(undefined))
-        .forMember(
+        ),
+        forMember((dst) => dst.gsiSortKey, fromValue(undefined)),
+        forMember(
           (dst) => dst.id,
           mapWithArguments((src, { id }) => id ?? src.id),
-        )
-        .forMember(
+        ),
+        forMember(
           (dst) => dst.createdAt,
           mapWithArguments((src, { createdAt }) => createdAt ?? src.createdAt),
-        )
-        .forMember(
+        ),
+        forMember(
           (dst) => dst.updatedAt,
           mapWithArguments((src, { updatedAt }) => updatedAt ?? src.updatedAt),
-        )
-        .forMember(
+        ),
+        forMember(
           (dst) => dst.textTemplate,
           mapWithArguments((src, { localeFields }) =>
             localeFields
               ? (localeFields as TemplateLocaleModel)?.textTemplate
               : src.localeFields?.textTemplate,
           ),
-        )
-        .forMember(
+        ),
+        forMember(
           (dst) => dst.subjectTemplate,
           mapWithArguments((src, { localeFields }) =>
             localeFields
               ? (localeFields as TemplateLocaleModel)?.subjectTemplate
               : src.localeFields?.subjectTemplate,
           ),
-        )
-        .forMember(
+        ),
+        forMember(
           (dst) => dst.htmlTemplate,
           mapWithArguments((src, { localeFields }) =>
             localeFields
               ? (localeFields as TemplateLocaleModel)?.htmlTemplate
               : src.localeFields?.htmlTemplate,
           ),
-        )
-        .forMember(
+        ),
+        forMember(
           (dst) => dst.locale,
           mapWithArguments((src, { locale }) => locale),
-        );
+        ),
+      );
 
-      mapper.createMap(TemplateLocaleModel, TemplateLocale);
+      createMap(mapper, TemplateLocaleModel, TemplateLocale);
 
-      mapper
-        .createMap(TemplateLocaleModel, Template)
-        .forMember(
-          (dst) => dst.localeFields,
-          mapFrom((src) => this.mapper.map(src, TemplateLocale, TemplateLocaleModel)),
-        )
-        .forMember(
+      createMap(
+        mapper,
+        TemplateLocaleModel,
+        Template,
+        forMember(
           (dst) => dst.createdAt,
           mapFrom((src) => new Date(src.createdAt)),
-        )
-        .forMember(
+        ),
+        forMember(
           (dst) => dst.updatedAt,
           mapFrom((src) => new Date(src.updatedAt)),
-        );
+        ),
+        forMember(
+          (dst) => dst.localeFields,
+          mapFrom((src) => mapper.map(src, TemplateLocaleModel, TemplateLocale)),
+        ),
+      );
 
-      mapper
-        .createMap(TemplateLocale, TemplateLocaleModel)
-        .forMember(
+      createMap(
+        mapper,
+        TemplateLocale,
+        TemplateLocaleModel,
+        forMember(
           (dst) => dst.id,
-          mapWithArguments((src, { id }) => id ?? src.id),
-        )
-        .forMember(
+          mapWithArguments((src, { id }) => id),
+        ),
+        forMember(
           (dst) => dst.tenantId,
-          mapWithArguments((src, { tenantId }) => tenantId ?? src.tenantId),
-        )
-        .forMember((dst) => dst.type, fromValue(ModelType.TEMPLATE_LOCALE))
-        .forMember(
+          mapWithArguments((_, { tenantId }) => tenantId),
+        ),
+        forMember((dst) => dst.type, fromValue(ModelType.TEMPLATE_LOCALE)),
+        forMember(
           (dst) => dst.itemKey,
-          mapWithArguments(
-            (src, { id }) => `${id ?? src.id}#${ModelType.TEMPLATE_LOCALE}#${src.locale}`,
-          ),
-        )
-        .forMember((dst) => dst.gsiSortKey, fromValue(undefined))
-        .forMember(
+          mapWithArguments((_, { id, locale }) => `${id}#${ModelType.TEMPLATE_LOCALE}#${locale}`),
+        ),
+        forMember((dst) => dst.gsiSortKey, fromValue(undefined)),
+        forMember(
           (dst) => dst.createdAt,
-          mapWithArguments((src, { createdAt }) => createdAt ?? src.createdAt),
-        )
-        .forMember(
+          mapWithArguments((_, { createdAt }) => createdAt),
+        ),
+        forMember(
           (dst) => dst.updatedAt,
-          mapWithArguments((src, { updatedAt }) => updatedAt ?? src.updatedAt),
-        )
-        .forMember(
+          mapWithArguments((_, { updatedAt }) => updatedAt),
+        ),
+        forMember(
           (dst) => dst.name,
           mapWithArguments((_, { name }) => name),
-        )
-        .forMember(
+        ),
+        forMember(
           (dst) => dst.from,
           mapWithArguments((_, { from }) => from),
-        )
-        .forMember(
+        ),
+        forMember(
           (dst) => dst.transportType,
           mapWithArguments((_, { transportType }) => transportType),
-        )
-        .forMember(
+        ),
+        forMember(
           (dst) => dst.dataSchema,
           mapWithArguments((_, { dataSchema }) => dataSchema),
-        )
-        .forMember(
+        ),
+        forMember(
           (dst) => dst.bcc,
           mapWithArguments((_, { bcc }) => bcc),
-        );
+        ),
+      );
     };
   }
 }

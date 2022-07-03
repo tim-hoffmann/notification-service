@@ -19,9 +19,8 @@ import { EntityNotFoundExceptionFilter } from './exception-filters/entity-not-fo
     AjvSchemaValidationModule,
     ConfigModule.forRoot({ envFilePath: '.env.local', load: [webConfig] }),
     AutomapperModule.forRoot({
-      options: [{ name: 'NOTIFICATION_SERVICE', pluginInitializer: classes }],
-      singular: true,
-      globalNamingConventions: new CamelCaseNamingConvention(),
+      strategyInitializer: classes(),
+      namingConventions: new CamelCaseNamingConvention(),
     }),
     ApplicationModule,
   ],

@@ -1,5 +1,5 @@
 import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
-import { ignore, mapFrom, Mapper, mapWithArguments } from '@automapper/core';
+import { createMap, forMember, ignore, mapFrom, Mapper, mapWithArguments } from '@automapper/core';
 import { Injectable } from '@nestjs/common';
 import { Template } from '../../../core/entities/template.entity';
 import { ReadTemplateDto } from '../../dtos/read-template.dto';
@@ -13,62 +13,71 @@ export class TemplateProfile extends AutomapperProfile {
     super(mapper);
   }
 
-  mapProfile() {
+  override get profile() {
     return (mapper: Mapper) => {
-      mapper
-        .createMap(CreateTemplateDto, Template)
-        .forMember(
+      createMap(
+        mapper,
+        CreateTemplateDto,
+        Template,
+        forMember(
           (dst) => dst.tenantId,
           mapWithArguments((_, { tenantId }) => tenantId),
-        )
-        .forMember((dst) => dst.id, ignore())
-        .forMember((dst) => dst.createdAt, ignore())
-        .forMember((dst) => dst.updatedAt, ignore())
-        .forMember(
+        ),
+        forMember((dst) => dst.id, ignore()),
+        forMember((dst) => dst.createdAt, ignore()),
+        forMember((dst) => dst.updatedAt, ignore()),
+        forMember(
           (dst) => dst.localeFields,
           mapWithArguments((src, { locale }) =>
-            this.mapper.map(src, TemplateLocale, CreateTemplateDto, { extraArguments: { locale } }),
+            mapper.map(src, CreateTemplateDto, TemplateLocale, {
+              extraArgs: () => ({ locale }),
+            }),
           ),
-        );
+        ),
+      );
 
-      mapper
-        .createMap(PatchTemplateDto, Template)
-        .forMember(
+      createMap(
+        mapper,
+        PatchTemplateDto,
+        Template,
+        forMember(
           (dst) => dst.tenantId,
           mapWithArguments((_, { tenantId }) => tenantId),
-        )
-        .forMember((dst) => dst.id, ignore())
-        .forMember((dst) => dst.createdAt, ignore())
-        .forMember((dst) => dst.updatedAt, ignore())
-        .forMember(
+        ),
+        forMember((dst) => dst.id, ignore()),
+        forMember((dst) => dst.createdAt, ignore()),
+        forMember((dst) => dst.updatedAt, ignore()),
+        forMember(
           (dst) => dst.localeFields,
-          mapWithArguments((src, { locale }) => {
-            const r = this.mapper.map(src, TemplateLocale, PatchTemplateDto, {
-              extraArguments: { locale },
-            });
+          mapWithArguments((src, { locale }) =>
+            mapper.map(src, PatchTemplateDto, TemplateLocale, {
+              extraArgs: () => ({ locale }),
+            }),
+          ),
+        ),
+      );
 
-            return r;
-          }),
-        );
-
-      mapper
-        .createMap(Template, ReadTemplateDto)
-        .forMember(
+      createMap(
+        mapper,
+        Template,
+        ReadTemplateDto,
+        forMember(
           (dst) => dst.htmlTemplate,
-          mapFrom((src) => src.localeFields.htmlTemplate),
-        )
-        .forMember(
+          mapFrom((src) => src.localeFields?.htmlTemplate),
+        ),
+        forMember(
           (dst) => dst.textTemplate,
-          mapFrom((src) => src.localeFields.textTemplate),
-        )
-        .forMember(
+          mapFrom((src) => src.localeFields?.textTemplate),
+        ),
+        forMember(
           (dst) => dst.subjectTemplate,
-          mapFrom((src) => src.localeFields.subjectTemplate),
-        )
-        .forMember(
+          mapFrom((src) => src.localeFields?.subjectTemplate),
+        ),
+        forMember(
           (dst) => dst.locale,
-          mapFrom((src) => src.localeFields.locale),
-        );
+          mapFrom((src) => src.localeFields?.locale),
+        ),
+      );
     };
   }
 }

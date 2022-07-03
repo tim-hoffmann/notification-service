@@ -7,7 +7,7 @@ export class ReadTemplateDto {
   @AutoMap() from!: string;
   @AutoMap() dataSchema?: string;
   @AutoMap() transportType!: TransportType;
-  @AutoMap() bcc?: string[];
+  @AutoMap(() => [String]) bcc?: string[];
   @AutoMap() locale!: string;
   @AutoMap() textTemplate!: string;
   @AutoMap() htmlTemplate?: string;

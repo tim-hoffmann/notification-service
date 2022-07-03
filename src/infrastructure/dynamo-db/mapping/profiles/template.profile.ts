@@ -1,5 +1,13 @@
 import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
-import { fromValue, mapFrom, Mapper, mapWithArguments } from '@automapper/core';
+import {
+  createMap,
+  fromValue,
+  mapFrom,
+  Mapper,
+  mapWithArguments,
+  forMember,
+  ignore,
+} from '@automapper/core';
 import { Injectable } from '@nestjs/common';
 import { Template } from '../../../../core/entities/template.entity';
 import { TemplateModel } from '../../models/template.model';
@@ -11,44 +19,51 @@ export class TemplateProfile extends AutomapperProfile {
     super(mapper);
   }
 
-  mapProfile() {
+  override get profile() {
     return (mapper: Mapper) => {
-      mapper
-        .createMap(Template, TemplateModel)
-        .forMember((dst) => dst.type, fromValue(ModelType.TEMPLATE))
-        .forMember(
+      createMap(
+        mapper,
+        Template,
+        TemplateModel,
+        forMember((dst) => dst.type, fromValue(ModelType.TEMPLATE)),
+        forMember(
           (dst) => dst.itemKey,
           mapWithArguments((src, { id }) => `${id ?? src.id}#${ModelType.TEMPLATE}#`),
-        )
-        .forMember(
+        ),
+        forMember(
           (dst) => dst.gsiSortKey,
           mapWithArguments(
             (src, { updatedAt }) => `${ModelType.TEMPLATE}#${updatedAt ?? src.updatedAt}`,
           ),
-        )
-        .forMember(
+        ),
+        forMember(
           (dst) => dst.createdAt,
           mapWithArguments((src, { createdAt }) => createdAt ?? src.createdAt),
-        )
-        .forMember(
+        ),
+        forMember(
           (dst) => dst.updatedAt,
           mapWithArguments((src, { updatedAt }) => updatedAt ?? src.updatedAt),
-        )
-        .forMember(
+        ),
+        forMember(
           (dst) => dst.id,
           mapWithArguments((src, { id }) => id ?? src.id),
-        );
+        ),
+      );
 
-      mapper
-        .createMap(TemplateModel, Template)
-        .forMember(
+      createMap(
+        mapper,
+        TemplateModel,
+        Template,
+        forMember(
           (dst) => dst.createdAt,
           mapFrom((src) => new Date(src.createdAt)),
-        )
-        .forMember(
+        ),
+        forMember(
           (dst) => dst.updatedAt,
           mapFrom((src) => new Date(src.updatedAt)),
-        );
+        ),
+        forMember((dst) => dst.localeFields, ignore()),
+      );
     };
   }
 }

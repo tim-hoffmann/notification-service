@@ -1,5 +1,5 @@
 import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
-import { Mapper, mapWithArguments } from '@automapper/core';
+import { createMap, Mapper, mapWithArguments, forMember } from '@automapper/core';
 import { Injectable } from '@nestjs/common';
 import { CreateTemplateLocaleDto } from '../../dtos/create-template-locale.dto';
 import { ReadTemplateLocaleDto } from '../../dtos/read-template-locale.dto';
@@ -13,19 +13,29 @@ export class TemplateLocaleProfile extends AutomapperProfile {
     super(mapper);
   }
 
-  mapProfile() {
+  override get profile() {
     return (mapper: Mapper) => {
-      mapper.createMap(CreateTemplateLocaleDto, TemplateLocale);
-      mapper.createMap(TemplateLocale, ReadTemplateLocaleDto);
+      createMap(mapper, CreateTemplateLocaleDto, TemplateLocale);
+      createMap(mapper, TemplateLocale, ReadTemplateLocaleDto);
 
-      mapper.createMap(CreateTemplateDto, TemplateLocale).forMember(
-        (dst) => dst.locale,
-        mapWithArguments((_, { locale }) => locale),
+      createMap(
+        mapper,
+        CreateTemplateDto,
+        TemplateLocale,
+        forMember(
+          (dst) => dst.locale,
+          mapWithArguments((_, { locale }) => locale),
+        ),
       );
 
-      mapper.createMap(PatchTemplateDto, TemplateLocale).forMember(
-        (dst) => dst.locale,
-        mapWithArguments((_, { locale }) => locale),
+      createMap(
+        mapper,
+        PatchTemplateDto,
+        TemplateLocale,
+        forMember(
+          (dst) => dst.locale,
+          mapWithArguments((_, { locale }) => locale),
+        ),
       );
     };
   }

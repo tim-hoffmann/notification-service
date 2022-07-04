@@ -1,15 +1,24 @@
-name: Release
+name: Build
 
 on:
-  workflow_run:
-    workflows: ["Test"]
-    types:
-      - completed
+  push:
+    branches:
+      - develop
+      - master
+      - 'feature/**'
+      - 'release/**'
+      - 'bugfix/**'
+      - 'dependabot/**'
 
 jobs:
-  release:
-    name: Release
+  build:
+    name: Run ${{ inputs.script }}
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
     steps:
       - uses: actions/checkout@v2
 
@@ -33,7 +42,25 @@ jobs:
       - name: Install dependencies
         run: yarn --frozen-lockfile
 
+      - name: Run build
+        run: yarn build
+
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
+
+  lint:
+    uses: tim-hoffmann/notification-service/.github/workflows/run-script.yml@master
+    with:
+      script: lint
+
+  test:
+    uses: tim-hoffmann/notification-service/.github/workflows/run-script.yml@master
+    with:
+      script: test
+
+  test-e2e:
+    uses: tim-hoffmann/notification-service/.github/workflows/run-script.yml@master
+    with:
+      script: test:e2e

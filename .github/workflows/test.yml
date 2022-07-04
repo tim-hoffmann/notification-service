@@ -12,9 +12,14 @@ on:
 
 jobs:
   build:
-    uses: tim-hoffmann/notification-service/.github/workflows/run-script.yml@master
-    with:
-      script: build
+    steps:
+      - uses: tim-hoffmann/notification-service/.github/workflows/run-script.yml@master
+        with:
+          script: build
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
 
   lint:
     uses: tim-hoffmann/notification-service/.github/workflows/run-script.yml@master

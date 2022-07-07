@@ -20,9 +20,30 @@ jobs:
         node-version: [16.x]
 
     steps:
-      - uses: tim-hoffmann/notification-service/.github/workflows/run-script.yml@master
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
         with:
-          script: build
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache node_modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+
+      - name: Run build
+        run: yarn build
 
       - name: Release
         env:

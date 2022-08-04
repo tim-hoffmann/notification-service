@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import Ajv from 'ajv';
-import { SchemaValidationService } from '../../core/services/schema-validation-service.interface';
+import { SchemaValidationService } from '../../core/services/schema-validation.service.interface';
 import { AjvSchemaValidationService } from './services/ajv-schema-validation.service';
 
 @Module({

@@ -1,2 +1,3 @@
 export const UNIQUE_ID_SERVICE = Symbol('UNIQUE_ID_SERVICE');
 export const TEMPLATE_REPOSITORY = Symbol('TEMPLATE_REPOSITORY');
+export const HTML_SERVICE = Symbol('HTML_SERVICE');

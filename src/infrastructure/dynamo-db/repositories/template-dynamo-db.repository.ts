@@ -5,7 +5,7 @@ import { Inject } from '@nestjs/common';
 import { UNIQUE_ID_SERVICE } from '../../../core/constants/di-tokens.constant';
 import { Template } from '../../../core/entities/template.entity';
 import { TemplateRepository } from '../../../core/repositories/template.repository';
-import { UniqueIdService } from '../../../core/services/unique-id.service';
+import { UniqueIdService } from '../../../core/services/unique-id.service.interface';
 import { ModelType } from '../enums/model-type.enum';
 import { TemplateLocaleModel } from '../models/template-locale.model';
 import { TemplateModel } from '../models/template.model';

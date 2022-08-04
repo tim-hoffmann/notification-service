@@ -1,4 +1,4 @@
-import { UniqueIdService } from '../../core/services/unique-id.service';
+import { UniqueIdService } from '../../core/services/unique-id.service.interface';
 import { customAlphabet } from 'nanoid/async';
 import { Injectable } from '@nestjs/common';
 

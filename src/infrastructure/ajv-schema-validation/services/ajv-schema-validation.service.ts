@@ -3,7 +3,7 @@ import Ajv from 'ajv';
 import {
   SchemaValidationResult,
   SchemaValidationService,
-} from '../../../core/services/schema-validation-service.interface';
+} from '../../../core/services/schema-validation.service.interface';
 
 @Injectable()
 export class AjvSchemaValidationService implements SchemaValidationService {
@@ -15,7 +15,7 @@ export class AjvSchemaValidationService implements SchemaValidationService {
   ): Promise<SchemaValidationResult> {
     const parsedSchema = this.parseSchema(schema);
 
-    if (!this.parseSchema) {
+    if (!parsedSchema) {
       return { success: false, error: 'SCHEMA_PARSE_FAILED' };
     }
 
@@ -30,7 +30,7 @@ export class AjvSchemaValidationService implements SchemaValidationService {
   async validateSchema(schema: string): Promise<SchemaValidationResult> {
     const parsedSchema = this.parseSchema(schema);
 
-    if (!this.parseSchema) {
+    if (!parsedSchema) {
       return { success: false, error: 'SCHEMA_PARSE_FAILED' };
     }
 

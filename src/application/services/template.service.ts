@@ -2,11 +2,14 @@ import { Mapper } from '@automapper/core';
 import { InjectMapper } from '@automapper/nestjs';
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import { TEMPLATE_REPOSITORY } from '../../core/constants/di-tokens.constant';
+import { HTML_SERVICE, TEMPLATE_REPOSITORY } from '../../core/constants/di-tokens.constant';
 import { TemplateLocale } from '../../core/entities/template-locale.entity';
 import { Template } from '../../core/entities/template.entity';
+import { HtmlTemplateInvalidException } from '../../core/exceptions/html-template-invalid.exception';
+import { HtmlError } from '../../core/interfaces/html-error.interface';
 import { PaginationResult } from '../../core/interfaces/pagination-result.interface';
 import { TemplateRepository } from '../../core/repositories/template.repository';
+import { HtmlService } from '../../core/services/html.service.interface';
 import applicationConfig from '../application.config';
 import { CreateTemplateLocaleDto } from '../dtos/create-template-locale.dto';
 import { CreateTemplateDto } from '../dtos/create-template.dto';
@@ -22,11 +25,14 @@ export class TemplateService {
     @Inject(TEMPLATE_REPOSITORY) private readonly templateRepository: TemplateRepository,
     @Inject(applicationConfig.KEY) readonly config: ConfigType<typeof applicationConfig>,
     @InjectMapper() private readonly mapper: Mapper,
+    @Inject(HTML_SERVICE) private readonly htmlService: HtmlService,
   ) {
     this.defaultLocale = config.defaultLocale;
   }
 
   async create(tenantId: string, dto: CreateTemplateDto): Promise<ReadTemplateDto> {
+    await this.validateHtmlTemplate(dto.htmlTemplate);
+
     const entity = this.mapper.map(dto, CreateTemplateDto, Template, {
       extraArgs: () => ({ tenantId, locale: this.defaultLocale }),
     });
@@ -108,5 +114,17 @@ export class TemplateService {
 
   async delete(tenantId: string, id: string, locale?: string) {
     await this.templateRepository.delete(tenantId, id, locale);
+  }
+
+  private async validateHtmlTemplate(htmlTemplate?: string): Promise<void> {
+    if (!htmlTemplate) {
+      return;
+    }
+
+    const errors = await this.htmlService.validate(htmlTemplate);
+
+    if (errors?.length) {
+      throw new HtmlTemplateInvalidException(errors);
+    }
   }
 }

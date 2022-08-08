@@ -46,7 +46,7 @@ describe('MjmlService', () => {
         {
           formattedMessage:
             'Malformed MJML. Check that your structure is correct and enclosed in <mjml> tags.',
-          line: -1,
+          line: 0,
           message:
             'Malformed MJML. Check that your structure is correct and enclosed in <mjml> tags.',
           tagName: 'n/a',

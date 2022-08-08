@@ -26,7 +26,7 @@ export class MjmlService implements HtmlService {
         return Promise.resolve<HtmlError[]>([
           {
             formattedMessage: ex.message,
-            line: -1,
+            line: 0,
             message: ex.message,
             tagName: 'n/a',
           },

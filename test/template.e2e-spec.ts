@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { WebModule } from '../src/web/web.module';
 import dynamoDbConfig from '../src/infrastructure/dynamo-db/dynamo-db.config';
 import 'reflect-metadata';
@@ -105,7 +105,7 @@ describe('TemplateController (e2e)', () => {
         .send({
           textTemplate: 'Das ist ein Patch Test!',
           from: 'patch@test.de',
-          htmlTemplate: '<html>test</html>',
+          htmlTemplate: '<mjml><mj-body>test</mj-body></mjml>',
         });
 
       expect(patchResponse.statusCode).toBe(200);
@@ -113,7 +113,7 @@ describe('TemplateController (e2e)', () => {
       expect(patchResponse.body.textTemplate).toBe('Das ist ein Patch Test!');
       expect(patchResponse.body.from).toBe('patch@test.de');
       expect(patchResponse.body.subjectTemplate).toBe('Hallo das ist der Betreff');
-      expect(patchResponse.body.htmlTemplate).toBe('<html>test</html>');
+      expect(patchResponse.body.htmlTemplate).toBe('<mjml><mj-body>test</mj-body></mjml>');
     });
   });
 

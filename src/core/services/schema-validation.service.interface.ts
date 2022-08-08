@@ -8,4 +8,4 @@ export interface SchemaValidationService {
   validateSchema(schema: string): Promise<SchemaValidationResult>;
 }
 
-export const SchemaValidationService = Symbol('SchemaValidationService');
+export const SCHEMA_VALIDATION_SERVICE = Symbol('SchemaValidationService');

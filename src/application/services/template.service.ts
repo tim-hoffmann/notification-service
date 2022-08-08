@@ -6,10 +6,13 @@ import { HTML_SERVICE, TEMPLATE_REPOSITORY } from '../../core/constants/di-token
 import { TemplateLocale } from '../../core/entities/template-locale.entity';
 import { Template } from '../../core/entities/template.entity';
 import { HtmlTemplateInvalidException } from '../../core/exceptions/html-template-invalid.exception';
-import { HtmlError } from '../../core/interfaces/html-error.interface';
 import { PaginationResult } from '../../core/interfaces/pagination-result.interface';
 import { TemplateRepository } from '../../core/repositories/template.repository';
 import { HtmlService } from '../../core/services/html.service.interface';
+import {
+  SchemaValidationService,
+  SCHEMA_VALIDATION_SERVICE,
+} from '../../core/services/schema-validation.service.interface';
 import applicationConfig from '../application.config';
 import { CreateTemplateLocaleDto } from '../dtos/create-template-locale.dto';
 import { CreateTemplateDto } from '../dtos/create-template.dto';
@@ -26,12 +29,15 @@ export class TemplateService {
     @Inject(applicationConfig.KEY) readonly config: ConfigType<typeof applicationConfig>,
     @InjectMapper() private readonly mapper: Mapper,
     @Inject(HTML_SERVICE) private readonly htmlService: HtmlService,
+    @Inject(SCHEMA_VALIDATION_SERVICE)
+    private readonly schemaValidationService: SchemaValidationService,
   ) {
     this.defaultLocale = config.defaultLocale;
   }
 
   async create(tenantId: string, dto: CreateTemplateDto): Promise<ReadTemplateDto> {
     await this.validateHtmlTemplate(dto.htmlTemplate);
+    await this.validateDataSchema(dto.dataSchema);
 
     const entity = this.mapper.map(dto, CreateTemplateDto, Template, {
       extraArgs: () => ({ tenantId, locale: this.defaultLocale }),
@@ -47,6 +53,8 @@ export class TemplateService {
     id: string,
     dto: CreateTemplateLocaleDto,
   ): Promise<ReadTemplateLocaleDto> {
+    await this.validateHtmlTemplate(dto.htmlTemplate);
+
     if (!(await this.templateRepository.exists(tenantId, id))) {
       throw new NotFoundException(`Template not found`);
     }
@@ -103,6 +111,9 @@ export class TemplateService {
     dto: PatchTemplateDto,
     locale: string = this.defaultLocale,
   ): Promise<ReadTemplateDto> {
+    await this.validateHtmlTemplate(dto.htmlTemplate);
+    await this.validateDataSchema(dto.dataSchema);
+
     const partialEntity = this.mapper.map(dto, PatchTemplateDto, Template, {
       extraArgs: () => ({ tenantId, locale }),
     });
@@ -125,6 +136,18 @@ export class TemplateService {
 
     if (errors?.length) {
       throw new HtmlTemplateInvalidException(errors);
+    }
+  }
+
+  private async validateDataSchema(dataSchema?: string): Promise<void> {
+    if (!dataSchema) {
+      return;
+    }
+
+    const result = await this.schemaValidationService.validateSchema(dataSchema);
+
+    if (!result.success) {
+      throw new Error();
     }
   }
 }

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import Ajv from 'ajv';
-import { AjvSchemaValidationService } from './ajv-schema-validation.service';
+import { AjvSchemaValidationService } from '../ajv-schema-validation.service';
 
 describe('AjvSchemaValidationService', () => {
   let service: AjvSchemaValidationService;

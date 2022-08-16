@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { WebModule } from '../src/web/web.module';
-import dynamoDbConfig from '../src/infrastructure/dynamo-db/dynamo-db.config';
+import dynamoDbConfig from '../src/infrastructure/aws-dynamo-db/dynamo-db.config';
 import 'reflect-metadata';
 
 describe('TemplateController (e2e)', () => {

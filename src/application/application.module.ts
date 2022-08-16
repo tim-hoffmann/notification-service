@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { CoreModule } from '../core/core.module';
 import { AjvSchemaValidationModule } from '../infrastructure/ajv-schema-validation/ajv-schema-validation.module';
-import { DynamoDbModule } from '../infrastructure/dynamo-db/dynamo-db.module';
+import { DynamoDbModule } from '../infrastructure/aws-dynamo-db/dynamo-db.module';
 import { MjmlModule } from '../infrastructure/mjml/mjml.module';
 import applicationConfig from './application.config';
 import { TemplateLocaleProfile } from './mapping/profiles/template-locale.profile';

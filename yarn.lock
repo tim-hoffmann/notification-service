@@ -602,10 +602,15 @@
     "@aws-sdk/types" "3.110.0"
     tslib "^2.3.1"
 
-"@aws-sdk/types@3.110.0", "@aws-sdk/types@^3.1.0", "@aws-sdk/types@^3.110.0":
+"@aws-sdk/types@3.110.0":
   version "3.110.0"
   resolved "https://registry.yarnpkg.com/@aws-sdk/types/-/types-3.110.0.tgz#09404533b507925eadf9acf9c4356667048e45bd"
   integrity sha512-dLVoqODU3laaqNFPyN1QLtlQnwX4gNPMXptEBIt/iJpuZf66IYJe6WCzVZGt4Zfa1CnUmrlA428AzdcA/KCr2A==
+
+"@aws-sdk/types@^3.1.0", "@aws-sdk/types@^3.159.0":
+  version "3.159.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/types/-/types-3.159.0.tgz#286c352b128bde53ab606da4f37978acc54201e4"
+  integrity sha512-5xlVaui5sAiBfpP8d/NbQ3xVJBzh8elvbWpiu9ZASujrCg1m1K3Icjl9q40dl1AAszujUsNQg6tB/MY395M0xw==
 
 "@aws-sdk/url-parser@3.110.0":
   version "3.110.0"

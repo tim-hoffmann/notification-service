@@ -506,6 +506,13 @@
   dependencies:
     tslib "^2.3.1"
 
+"@aws-sdk/middleware-stack@3.201.0":
+  version "3.201.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/middleware-stack/-/middleware-stack-3.201.0.tgz#a21e088e691210e91e1c0d40ab9906d57390efa1"
+  integrity sha512-lqHYSBP5FBxzA5w5XiYYYpfXabFzleXonqRkqZts1tapNJ4sOd+itiKG8JoNP7LDOwJ8qxNW/a33/gQeh3wkwQ==
+  dependencies:
+    tslib "^2.3.1"
+
 "@aws-sdk/middleware-user-agent@3.110.0":
   version "3.110.0"
   resolved "https://registry.yarnpkg.com/@aws-sdk/middleware-user-agent/-/middleware-user-agent-3.110.0.tgz#52f32e99ecb641babcd59bb010527d5614e908f4"
@@ -593,7 +600,7 @@
     "@aws-sdk/util-uri-escape" "3.55.0"
     tslib "^2.3.1"
 
-"@aws-sdk/smithy-client@3.110.0", "@aws-sdk/smithy-client@^3.110.0":
+"@aws-sdk/smithy-client@3.110.0":
   version "3.110.0"
   resolved "https://registry.yarnpkg.com/@aws-sdk/smithy-client/-/smithy-client-3.110.0.tgz#397c0e7ef56ffa058469c641b586978400c09dd7"
   integrity sha512-gNLYrmdAe/1hVF2Nv2LF4OkL1A0a1o708pEMZHzql9xP164omRDaLrGDhz9tH7tsJEgLz+Bf4E8nTuISeDwvGg==
@@ -602,10 +609,24 @@
     "@aws-sdk/types" "3.110.0"
     tslib "^2.3.1"
 
-"@aws-sdk/types@3.110.0", "@aws-sdk/types@^3.1.0", "@aws-sdk/types@^3.110.0":
+"@aws-sdk/smithy-client@^3.201.0":
+  version "3.201.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/smithy-client/-/smithy-client-3.201.0.tgz#f52fac3b1462a3c85898cf4d0ae9c7453eb0a46e"
+  integrity sha512-cL87Jgxczee8YFkWGWKQ2Ze0vjn4+eCa1kDvEYMCOQvNujTuFgatXLgije5a7nVkSnL9WLoIP7Y7fsBGrKfMnQ==
+  dependencies:
+    "@aws-sdk/middleware-stack" "3.201.0"
+    "@aws-sdk/types" "3.201.0"
+    tslib "^2.3.1"
+
+"@aws-sdk/types@3.110.0":
   version "3.110.0"
   resolved "https://registry.yarnpkg.com/@aws-sdk/types/-/types-3.110.0.tgz#09404533b507925eadf9acf9c4356667048e45bd"
   integrity sha512-dLVoqODU3laaqNFPyN1QLtlQnwX4gNPMXptEBIt/iJpuZf66IYJe6WCzVZGt4Zfa1CnUmrlA428AzdcA/KCr2A==
+
+"@aws-sdk/types@3.201.0", "@aws-sdk/types@^3.1.0", "@aws-sdk/types@^3.110.0":
+  version "3.201.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/types/-/types-3.201.0.tgz#c248106b7a780360d6bca876036e65ca2a4e240d"
+  integrity sha512-RCQj2pQyHD330Jd4c5CHJ87k2ZqC3Mmtl6nhwH1dy3vbnGUpc3q+3yinOKoTAY934kIa7ia32Y/2EjuyHxaj1A==
 
 "@aws-sdk/url-parser@3.110.0":
   version "3.110.0"

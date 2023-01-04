@@ -70,7 +70,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^28.1.1",
-    "jest-dynalite": "^3.6.0",
+    "jest-dynalite": "^3.6.1",
     "prettier": "^2.7.1",
     "semantic-release": "^19.0.3",
     "source-map-support": "^0.5.21",

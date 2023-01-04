@@ -48,7 +48,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@aws-sdk/types": "^3.110.0",
+    "@aws-sdk/types": "^3.226.0",
     "@nestjs/cli": "^8.2.8",
     "@nestjs/schematics": "^8.0.11",
     "@nestjs/testing": "^8.4.7",

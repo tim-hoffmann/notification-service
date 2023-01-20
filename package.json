@@ -28,7 +28,7 @@
     "@aws-sdk/client-ses": "^3.150.0",
     "@aws-sdk/credential-provider-node": "^3.150.0",
     "@aws-sdk/lib-dynamodb": "^3.118.0",
-    "@aws-sdk/smithy-client": "^3.110.0",
+    "@aws-sdk/smithy-client": "^3.254.0",
     "@nestjs/common": "^8.4.7",
     "@nestjs/config": "^2.1.0",
     "@nestjs/core": "^8.4.7",
